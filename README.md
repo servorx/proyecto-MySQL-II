@@ -1,0 +1,1 @@
+# Resolucion general del proyecto
