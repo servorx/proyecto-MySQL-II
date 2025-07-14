@@ -4,7 +4,7 @@ USE proyecto;
 
 --   tener en cuenta lo del varchar 2 porque en los registros de los paises toca colocar manualmente el codigo con 2 digitos, es decir, 0.5 y asi.
 CREATE TABLE IF NOT EXISTS countries (
-  isocode VARCHAR(6) PRIMARY KEY,
+  iso_code VARCHAR(6) PRIMARY KEY,
   name VARCHAR(50) UNIQUE NOT NULL,
   alfaisotwo VARCHAR(2) UNIQUE NOT NULL,
   alfaisothree VARCHAR(4) UNIQUE NOT NULL
@@ -20,9 +20,9 @@ CREATE TABLE IF NOT EXISTS state_or_regions(
   name VARCHAR(60) UNIQUE NOT NULL,
   country_id VARCHAR(6) NOT NULL,
   code3166 VARCHAR(10) UNIQUE,
-  subdivision_id INT(11),
+  subdivision_id INT,
   CONSTRAINT fk_subdivision_id_state_or_regions FOREIGN KEY (subdivision_id) REFERENCES subdivision_categories(id),
-  CONSTRAINT fk_country_id_state_or_regions FOREIGN KEY (country_id) REFERENCES countries(isocode)
+  CONSTRAINT fk_country_id_state_or_regions FOREIGN KEY (country_id) REFERENCES countries(iso_code)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS cities_or_municipalities (
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS companies (
   id INT PRIMARY KEY AUTO_INCREMENT,
   type_id INT,
   name VARCHAR(80),
-  category_id INT(11),
-  city_id VARCHAR(5),
+  category_id INT,
+  city_id VARCHAR(6),
   audience_id INT,
   cellphone VARCHAR(15),
   email VARCHAR(50),
@@ -91,23 +91,38 @@ CREATE TABLE IF NOT EXISTS benefits (
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS audience_benefits (
-  audience_id INT(11),
-  benefit_id INT(11),
+  audience_id INT,
+  benefit_id INT,
   PRIMARY KEY(audience_id, benefit_id),
   CONSTRAINT fk_audience_id_audience_benefits FOREIGN KEY (audience_id) REFERENCES audiences(id),
   CONSTRAINT fk_benefit_id_audience_benefits FOREIGN KEY (benefit_id) REFERENCES benefits(id)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS membership_benefits (
-  membership_id INT(11),
-  period_id INT(11),
-  audience_id INT(11),
-  benefit_id INT(11),
+  membership_id INT,
+  period_id INT,
+  audience_id INT,
+  benefit_id INT,
   PRIMARY KEY (membership_id, period_id, audience_id, benefit_id),
   CONSTRAINT fk_membership_id_membership_benefits FOREIGN KEY (membership_id) REFERENCES memberships(id),
   CONSTRAINT fk_period_id_membership_benefits FOREIGN KEY (period_id) REFERENCES periods(id),
   CONSTRAINT fk_audience_id_membership_benefits FOREIGN KEY (audience_id) REFERENCES audiences(id),
   CONSTRAINT fk_benefit_id_membership_benefits FOREIGN KEY (benefit_id) REFERENCES benefits(id)
+) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS products (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(60) UNIQUE,
+  detail TEXT,
+  price DECIMAL(10,2),
+  image VARCHAR(80),
+  category_id INT,
+  CONSTRAINT fk_category_id_products FOREIGN KEY (category_id) REFERENCES categories(id)
+) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS unit_of_measure (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  description VARCHAR(60) UNIQUE
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS company_products (
@@ -119,11 +134,6 @@ CREATE TABLE IF NOT EXISTS company_products (
   CONSTRAINT fk_company_id_company_products FOREIGN KEY (company_id) REFERENCES companies(id),
   CONSTRAINT fk_product_id_company_products FOREIGN KEY (product_id) REFERENCES products(id),
   CONSTRAINT fk_unitmeasure_id_company_products FOREIGN KEY (unitmeasure_id) REFERENCES unit_of_measure(id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS unit_of_measure (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  description VARCHAR(60) UNIQUE
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS categories_polls (
@@ -140,6 +150,18 @@ CREATE TABLE IF NOT EXISTS polls (
   CONSTRAINT fk_categorypoll_id_polls FOREIGN KEY (categorypoll_id) REFERENCES categories_polls(id)
 ) ENGINE=INNODB;
 
+CREATE TABLE IF NOT EXISTS customers (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(80) NOT NULL,
+  city_id VARCHAR(6),
+  audience_id INT,
+  cellphone VARCHAR(20),
+  email VARCHAR(100),
+  address VARCHAR(120),
+  CONSTRAINT fk_city_id_customers FOREIGN KEY (city_id) REFERENCES cities_or_municipalities(code),
+  CONSTRAINT fk_audience_id_customers FOREIGN KEY (audience_id) REFERENCES audiences(id)
+) ENGINE=INNODB;
+
 CREATE TABLE IF NOT EXISTS quality_products (
   product_id INT,
   customer_id INT,
@@ -151,7 +173,7 @@ CREATE TABLE IF NOT EXISTS quality_products (
   CONSTRAINT fk_product_id_quality_products FOREIGN KEY (product_id) REFERENCES products(id),
   CONSTRAINT fk_customer_id_quality_products FOREIGN KEY (customer_id) REFERENCES customers(id),
   CONSTRAINT fk_poll_id_quality_products FOREIGN KEY (poll_id) REFERENCES polls(id),
-  CONSTRAINT fk_company_id_quality_products FOREIGN KEY (company_id) REFERENCES companies(id),
+  CONSTRAINT fk_company_id_quality_products FOREIGN KEY (company_id) REFERENCES companies(id)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS rates (
@@ -166,34 +188,13 @@ CREATE TABLE IF NOT EXISTS rates (
   CONSTRAINT fk_poll_id_rates FOREIGN KEY (poll_id) REFERENCES polls(id)
 ) ENGINE=INNODB;
 
-CREATE TABLE IF NOT EXISTS products (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(60) UNIQUE,
-  detail TEXT,
-  price DECIMAL(10,2),
-  image VARCHAR(80),
-  category_id INT(11),
-  CONSTRAINT fk_category_id_products FOREIGN KEY (category_id) REFERENCES categories(id)
-) ENGINE=INNODB;
-
 CREATE TABLE IF NOT EXISTS favorites (
   id INT PRIMARY KEY AUTO_INCREMENT,
   customer_id INT,
   company_id INT,
+  UNIQUE(customer_id, company_id)
   CONSTRAINT fk_customer_id_favorites FOREIGN KEY (customer_id) REFERENCES customers(id),
   CONSTRAINT fk_company_id_favorites FOREIGN KEY (company_id) REFERENCES companies(id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS customers (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(80) NOT NULL,
-  city_id VARCHAR(6),
-  audience_id INT,
-  cellphone VARCHAR(20),
-  email VARCHAR(100),
-  address VARCHAR(120),
-  CONSTRAINT fk_city_id_customers FOREIGN KEY (city_id) REFERENCES cities_or_municipalities(code),
-  CONSTRAINT fk_audience_id_customers FOREIGN KEY (audience_id) REFERENCES audiences(id)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS detail_favorites (
