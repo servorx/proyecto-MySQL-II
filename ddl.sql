@@ -4,20 +4,18 @@ USE proyecto;
 
 
 CREATE TABLE IF NOT EXISTS dane_departments (
-  dane_code VARCHAR(2) PRIMARY KEY, -- Código de departamento DANE (ej. '05', '08')
-  name VARCHAR(60) UNIQUE NOT NULL  -- Nombre del departamento DANE (ej. 'Antioquia')
+  dane_code VARCHAR(2) PRIMARY KEY,
+  name VARCHAR(60) UNIQUE NOT NULL  
 ) ENGINE=INNODB;
 
--- Tabla para almacenar los municipios DANE
 CREATE TABLE IF NOT EXISTS dane_municipalities (
-  dane_department_code VARCHAR(2) NOT NULL,    -- Código de departamento DANE (FK a dane_departments)
-  dane_municipality_code VARCHAR(3) NOT NULL, -- Código de municipio DANE (ej. '001', '002')
-  name VARCHAR(60) NOT NULL,                  -- Nombre del municipio/ciudad DANE (ej. 'MEDELLIN')
+  dane_department_code VARCHAR(2) NOT NULL,   
+  dane_municipality_code VARCHAR(3) NOT NULL, 
+  name VARCHAR(60) NOT NULL,                  
   PRIMARY KEY (dane_department_code, dane_municipality_code), 
   CONSTRAINT fk_dane_department_mun FOREIGN KEY (dane_department_code) REFERENCES dane_departments(dane_code)
 ) ENGINE=INNODB;
 
---   tener en cuenta lo del varchar 2 porque en los registros de los paises toca colocar manualmente el codigo con 2 digitos, es decir, 0.5 y asi.
 CREATE TABLE IF NOT EXISTS countries (
   iso_code VARCHAR(6) PRIMARY KEY,
   name VARCHAR(50) UNIQUE NOT NULL,
@@ -98,7 +96,6 @@ CREATE TABLE IF NOT EXISTS companies (
   CONSTRAINT fk_phone_id_companies FOREIGN KEY (phone_id) REFERENCES phones(id)
 ) ENGINE=INNODB;
 
-
 CREATE TABLE IF NOT EXISTS memberships (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(50) UNIQUE NOT NULL,
@@ -110,6 +107,12 @@ CREATE TABLE IF NOT EXISTS periods (
   name VARCHAR(50) UNIQUE NOT NULL
 ) ENGINE=INNODB;
 
+CREATE TABLE IF NOT EXISTS benefits (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  description VARCHAR(80),
+  detail TEXT
+) ENGINE=INNODB;
+
 CREATE TABLE IF NOT EXISTS membership_periods (
   membership_id INT,
   period_id INT,
@@ -117,12 +120,6 @@ CREATE TABLE IF NOT EXISTS membership_periods (
   PRIMARY KEY(membership_id, period_id),
   CONSTRAINT fk_membership_id_membership_periods FOREIGN KEY (membership_id) REFERENCES memberships(id),
   CONSTRAINT fk_period_id_membership_periods FOREIGN KEY (period_id) REFERENCES periods(id)
-) ENGINE=INNODB;
-
-CREATE TABLE IF NOT EXISTS benefits (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  description VARCHAR(80),
-  detail TEXT
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS audience_benefits (
@@ -195,6 +192,7 @@ CREATE TABLE IF NOT EXISTS addresses (
 CREATE TABLE IF NOT EXISTS customers (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(80) NOT NULL,
+  city_id VARCHAR(10),
   audience_id INT,
   phone_id INT,
   email_id INT,
@@ -204,8 +202,6 @@ CREATE TABLE IF NOT EXISTS customers (
   CONSTRAINT fk_address_id_customers FOREIGN KEY (address_id) REFERENCES addresses(id),
   CONSTRAINT fk_phone_id_customers FOREIGN KEY (phone_id) REFERENCES phones(id)
 ) ENGINE=INNODB;
-
-
 
 CREATE TABLE IF NOT EXISTS quality_products (
   product_id INT,
