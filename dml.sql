@@ -12,7 +12,7 @@ INSERT INTO categories (description) VALUES('Tecnología'),('Alimentos y Bebidas
 
 INSERT INTO audiences (description) VALUES ('Consumidor Final (B2C)'),('Empresas (B2B)'),('Jóvenes y Estudiantes'),('Familias'),('Profesionales'),('Adultos Mayores'),('Turistas'),('Emprendedores'),('Comunidad Local'),('Nicho Específico');
 
-INSERT INTO emails (email_name, email_type) VALUES('info@techsolutions.com', 'General'),('ventas@freshfoods.co', 'Ventas'),('soporte@fashionhub.net', 'Soporte'),('contacto@wellnesscenter.org', 'Contacto'),('admin@autocare.com', 'Administración'),('clientes@financepro.com', 'Clientes'),('admisiones@learnacademy.edu', 'Admisiones'),('reservas@funland.com', 'Reservas'),('pedidos@homegoods.shop', 'Pedidos'),('marketing@sportzone.com', 'Marketing'),('gerencia@globalsolutions.com', 'Gerencia'),('rrhh@corporation.com', 'Recursos Humanos'),('legal@lawfirm.com', 'Legal'),('facturacion@invoices.com', 'Facturación'),('partners@alliance.com', 'Partners');
+INSERT INTO emails (email_name, email_type) VALUES('info@techsolutions.com', 'General'),('ventas@freshfoods.co', 'Ventas'),('soporte@fashionhub.net', 'Soporte'),('contacto@wellnesscenter.org', 'Contacto'),('admin@autocare.com', 'Administración'),('clientes@financepro.com', 'Clientes'),('admisiones@learnacademy.edu', 'Admisiones'),('reservas@funland.com', 'Reservas'),('pedidos@homegoods.shop', 'Pedidos'),('marketing@sportzone.com', 'Marketing'),('gerencia@globalsolutions.com', 'Gerencia'),('rrhh@corporation.com', 'Recursos Humanos'),('legal@lawfirm.com', 'Legal'),('facturacion@invoices.com', 'Facturación'),('partners@alliance.com', 'Partners'),('juan.perez@personal.com', 'Personal_Cliente_JP'), ('maria.gomez@personal.com', 'Personal_Cliente_MG'), ('carlos.ruiz@personal.com', 'Personal_Cliente_CR'), ('ana.lopez@personal.com', 'Personal_Cliente_AL'), ('pedro.martinez@personal.com', 'Personal_Cliente_PM'); 
 
 INSERT INTO companies (type_id, name, category_id, city_id, audience_id, cellphone, email_id) VALUES (6, 'Tech Solutions S.A.S.', 1, '57-1-BOG', 2, '3101234567', 1), (6, 'Fresh Foods Ltda.', 2, '57-4-MED', 1, '3112345678', 2), (6, 'Fashion Hub Store', 3, '57-2-CAL', 1, '3123456789', 3), (1, 'Wellness Center SAS', 4, '57-7-BUC', 5, '3154567890', 4), (6, 'AutoCare Services', 5, '57-5-BAR', 1, '3165678901', 5), (6, 'Finance Pro Group', 6, '57-1-BOG', 2, '3006789012', 6), (6, 'Learn Academy', 7, '57-7-CUC', 3, '3017890123', 7), (6, 'FunLand Park', 8, '57-5-CAR', 4, '3108901234', 8), (6, 'HomeGoods Express', 9, '57-6-PER', 1, '3119012345', 9), (6, 'SportZone Colombia', 10, '57-8-IBA', 1, '3120123456', 10), (6, 'Global Solutions Corp.', 1, '57-1-BOG', 2, '3151234567', 11), (6, 'Constructora XYZ', 9, '57-4-MED', 2, '3162345678', 12), (6, 'Bufete Legal Asociados', NULL, '57-1-BOG', 5, '3003456789', 13), (6, 'Distribuidora del Café', 2, '57-6-MAN', 2, '3014567890', 14), (6, 'Agencia de Viajes Aventura', NULL, '57-8-NEI', 7, '3105678901', 15); 
 
@@ -36,70 +36,14 @@ INSERT INTO company_products (company_id, product_id, price, unitmeasure_id) VAL
 
 INSERT INTO categories_polls (name) VALUES('Satisfacción del Cliente'),('Calidad del Producto'),('Experiencia de Usuario'),('Servicio al Cliente'),('Lealtad de Marca'),('Necesidades del Mercado');
 
-INSERT INTO polls (name, description, isactive, categorypoll_id) VALUES
-('Encuesta de Satisfacción General', 'Encuesta para medir la satisfacción general con nuestros servicios.', TRUE, 1),
-('Evaluación de Producto: Smartphone X', 'Encuesta de calidad específica para el Smartphone X.', TRUE, 2),
-('Experiencia en la Tienda Online', 'Encuesta sobre la usabilidad y experiencia de compra en el sitio web.', TRUE, 3),
-('Soporte Técnico Post-Venta', 'Encuesta para evaluar la calidad del soporte técnico recibido.', TRUE, 4),
-('Recomendación de Marca', 'Encuesta para entender la probabilidad de recomendación de nuestra marca.', TRUE, 5),
-('Interés en Nuevos Productos', 'Encuesta para sondear el interés en futuras líneas de productos.', TRUE, 6),
-('Calidad del Café Premium', 'Encuesta sobre el sabor y la calidad de nuestro Café Premium Blend.', TRUE, 2),
-('Servicio de Asesoría Financiera', 'Encuesta de satisfacción con la consultoría financiera.', FALSE, 4);
+INSERT INTO polls (name, description, isactive, categorypoll_id) VALUES('Encuesta de Satisfacción General', 'Encuesta para medir la satisfacción general con nuestros servicios.', TRUE, 1),('Evaluación de Producto: Smartphone X', 'Encuesta de calidad específica para el Smartphone X.', TRUE, 2),('Experiencia en la Tienda Online', 'Encuesta sobre la usabilidad y experiencia de compra en el sitio web.', TRUE, 3),('Soporte Técnico Post-Venta', 'Encuesta para evaluar la calidad del soporte técnico recibido.', TRUE, 4),('Recomendación de Marca', 'Encuesta para entender la probabilidad de recomendación de nuestra marca.', TRUE, 5),('Interés en Nuevos Productos', 'Encuesta para sondear el interés en futuras líneas de productos.', TRUE, 6),('Calidad del Café Premium', 'Encuesta sobre el sabor y la calidad de nuestro Café Premium Blend.', TRUE, 2),('Servicio de Asesoría Financiera', 'Encuesta de satisfacción con la consultoría financiera.', FALSE, 4);
 
+INSERT INTO customers (name, city_id, audience_id, cellphone, email_id, address) VALUES ('Juan Pérez', '57-1-BOG', 1, '3001112233', 16, 'Calle 10 # 20-30'),('María Gómez', '57-4-MED', 1, '3012223344', 17, 'Carrera 50 # 10-15'),('Carlos Ruiz', '57-2-CAL', 5, '3103334455', 18, 'Avenida 3 # 12-45'),('Ana López', '57-7-BUC', 4, '3114445566', 19, 'Bulevar Santander # 5-60'),('Pedro Martínez', '57-5-BAR', 3, '3125556677', 20, 'Calle 70 # 8-25'),('Laura Sánchez', '57-1-BOG', 1, '3156667788', 16, 'Diagonal 100 # 15-50'),('Sofía Torres', '57-4-MED', 1, '3167778899', 17, 'Circular 74 # 30-05');
 
+INSERT INTO quality_products (product_id, customer_id, poll_id, company_id, daterating, rating) VALUES(1, 1, 2, 1, '2024-06-15 10:00:00', 4.5), (2, 2, 7, 2, '2024-06-16 11:30:00', 4.8), (3, 1, 1, 3, '2024-06-17 14:00:00', 4.0), (11, 3, 2, 1, '2024-06-18 09:00:00', 4.2), (12, 4, 7, 2, '2024-06-19 10:15:00', 4.9), (7, 5, 1, 7, '2024-06-20 16:00:00', 4.7), (1, 6, 2, 1, '2024-06-21 17:00:00', 4.6), (2, 7, 7, 2, '2024-06-22 08:00:00', 4.7); 
 
+INSERT INTO rates (customer_id, company_id, poll_id, daterating, rating) VALUES(1, 1, 1, '2024-06-15 10:30:00', 4.3), (2, 2, 1, '2024-06-16 12:00:00', 4.6), (3, 4, 1, '2024-06-17 14:30:00', 4.1), (4, 8, 1, '2024-06-19 10:45:00', 4.9), (5, 7, 1, '2024-06-20 16:30:00', 4.5), (1, 3, 1, '2024-06-22 09:00:00', 3.9), (6, 1, 1, '2024-06-23 11:00:00', 4.4), (7, 2, 1, '2024-06-24 13:00:00', 4.8);
 
+INSERT INTO favorites (customer_id, company_id) VALUES(1, 1), (1, 3), (2, 2), (3, 1), (4, 8),(5, 7), (6, 1),(7, 2); 
 
-INSERT INTO customers (name, city_id, audience_id, cellphone, email_id, address) VALUES ('Juan Pérez', '57-1-BOG', 1, '3001112233', 16, 'Calle 10 # 20-30'),('María Gómez', '57-4-MED', 1, '3012223344', 17, 'Carrera 50 # 10-15'), ('Carlos Ruiz', '57-2-CAL', 5, '3103334455', 18, 'Avenida 3 # 12-45'), ('Ana López', '57-7-BUC', 4, '3114445566', 19, 'Bulevar Santander # 5-60'), ('Pedro Martínez', '57-5-BAR', 3, '3125556677', 20, 'Calle 70 # 8-25'), ('Laura Sánchez', '57-1-BOG', 1, '3156667788', 16, 'Diagonal 100 # 15-50'), ('Sofía Torres', '57-4-MED', 1, '3167778899', 17, 'Circular 74 # 30-05'); 
-
-
-INSERT INTO quality_products (product_id, customer_id, poll_id, company_id, daterating, rating) VALUES
-(1, 1, 2, 1, '2024-06-15 10:00:00', 4.5), -- Juan Pérez califica Smartphone X de Tech Solutions
-(2, 2, 7, 2, '2024-06-16 11:30:00', 4.8), -- María Gómez califica Café Premium de Fresh Foods
-(3, 1, 1, 3, '2024-06-17 14:00:00', 4.0), -- Juan Pérez califica Camiseta de Fashion Hub (encuesta general)
-(11, 3, 2, 1, '2024-06-18 09:00:00', 4.2), -- Carlos Ruiz califica Laptop Ultrabook de Tech Solutions
-(12, 4, 7, 2, '2024-06-19 10:15:00', 4.9), -- Ana López califica Pan Artesanal de Fresh Foods
-(7, 5, 1, 7, '2024-06-20 16:00:00', 4.7), -- Pedro Martínez califica Curso Online de Learn Academy (encuesta general)
-(1, 6, 2, 1, '2024-06-21 17:00:00', 4.6), -- Laura Sánchez califica Smartphone X de Tech Solutions
-(2, 7, 7, 2, '2024-06-22 08:00:00', 4.7); -- Sofía Torres califica Café Premium de Fresh Foods
-
--- Inserts para la tabla rates
--- Calificaciones de empresas por clientes.
--- Se asume que los IDs de customers (1-7), companies (1-15) y polls (1-8) existen.
-INSERT INTO rates (customer_id, company_id, poll_id, daterating, rating) VALUES
-(1, 1, 1, '2024-06-15 10:30:00', 4.3), -- Juan Pérez califica Tech Solutions (encuesta general)
-(2, 2, 1, '2024-06-16 12:00:00', 4.6), -- María Gómez califica Fresh Foods (encuesta general)
-(3, 4, 1, '2024-06-17 14:30:00', 4.1), -- Carlos Ruiz califica Wellness Center (encuesta general)
-(4, 8, 1, '2024-06-19 10:45:00', 4.9), -- Ana López califica FunLand Park (encuesta general)
-(5, 7, 1, '2024-06-20 16:30:00', 4.5), -- Pedro Martínez califica Learn Academy (encuesta general)
-(1, 3, 1, '2024-06-22 09:00:00', 3.9), -- Juan Pérez califica Fashion Hub (encuesta general)
-(6, 1, 1, '2024-06-23 11:00:00', 4.4), -- Laura Sánchez califica Tech Solutions (encuesta general)
-(7, 2, 1, '2024-06-24 13:00:00', 4.8); -- Sofía Torres califica Fresh Foods (encuesta general)
-
--- Inserts para la tabla favorites
--- Clientes marcando empresas como favoritas.
--- Se asume que los IDs de customers (1-7) y companies (1-15) existen.
-INSERT INTO favorites (customer_id, company_id) VALUES
-(1, 1), -- Juan Pérez - Tech Solutions
-(1, 3), -- Juan Pérez - Fashion Hub Store
-(2, 2), -- María Gómez - Fresh Foods Ltda.
-(3, 1), -- Carlos Ruiz - Tech Solutions S.A.S.
-(4, 8), -- Ana López - FunLand Park
-(5, 7), -- Pedro Martínez - Learn Academy
-(6, 1), -- Laura Sánchez - Tech Solutions S.A.S.
-(7, 2); -- Sofía Torres - Fresh Foods Ltda.
-
--- Inserts para la tabla detail_favorites
--- Productos específicos dentro de las listas de favoritos.
--- Se asume que los IDs de favorites (1-8) y products (1-15) existen.
-INSERT INTO detail_favorites (favorite_id, product_id) VALUES
-(1, 1),  -- Favorito 1 (Juan Pérez - Tech Solutions) - Smartphone X
-(1, 11), -- Favorito 1 (Juan Pérez - Tech Solutions) - Laptop Ultrabook
-(2, 2),  -- Favorito 2 (María Gómez - Fresh Foods) - Café Premium Blend
-(2, 12), -- Favorito 2 (María Gómez - Fresh Foods) - Pan Artesanal Integral
-(3, 3),  -- Favorito 3 (Juan Pérez - Fashion Hub) - Camiseta Algodón Orgánico
-(4, 1),  -- Favorito 4 (Carlos Ruiz - Tech Solutions) - Smartphone X
-(5, 8),  -- Favorito 5 (Ana López - FunLand Park) - Entrada Parque Temático
-(6, 7),  -- Favorito 6 (Pedro Martínez - Learn Academy) - Curso Online de Programación
-(7, 1),  -- Favorito 7 (Laura Sánchez - Tech Solutions) - Smartphone X
-(8, 2);  -- Favorito 8 (Sofía Torres - Fresh Foods) - Café Premium Blend
+INSERT INTO detail_favorites (favorite_id, product_id) VALUES(1, 1),  (1, 11), (2, 2),  (2, 12), (3, 3),  (4, 1),  (5, 8),  (6, 7),  (7, 1),  (8, 2); 
