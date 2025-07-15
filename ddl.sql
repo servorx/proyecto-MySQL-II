@@ -54,13 +54,12 @@ CREATE TABLE IF NOT EXISTS emails (
   email_type VARCHAR(60) UNIQUE NOT NULL
 );
 
--- le cambie el id al companies para que fuera entero y auto increment
 CREATE TABLE IF NOT EXISTS companies (
   id INT PRIMARY KEY AUTO_INCREMENT,
   type_id INT,
   name VARCHAR(80),
   category_id INT,
-  city_id VARCHAR(6),
+  city_id VARCHAR(10),
   audience_id INT,
   cellphone VARCHAR(15),
   email_id INT,
@@ -160,7 +159,7 @@ CREATE TABLE IF NOT EXISTS polls (
 CREATE TABLE IF NOT EXISTS customers (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(80) NOT NULL,
-  city_id VARCHAR(6),
+  city_id VARCHAR(10),
   audience_id INT,
   cellphone VARCHAR(20),
   email_id INT,
