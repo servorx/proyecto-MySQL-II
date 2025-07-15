@@ -2,7 +2,7 @@
 
 ### Las soluciones específicas se encuentran en la carpeta `scripts`, donde se pueden encontrar los 20 ejercicios de cada apartado en su respectivo archivo.
 
-#### A su vez, todos los inserts se encuentran en el archivo `dml.sql` y la creacion de las tablas en el archivo `ddl.sql`.
+#### A su vez, todos los inserts se encuentran en el archivo `dml.sql` y la creacion de las tablas en el archivo `ddl.sql`. Simplemente se copia y se pega todo el archivo dml para crear la base de datos y sus tablas para luego copiar y pegar todo el archivo de ddl y agregar las insersiones, ya en cada apartado de ejercicios se puede encontrar su respectivo archivo y solucion en este mismo readme o en la carpeta scripts
 
 # Historias de Usuario
 

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS subdivision_categories(
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS state_or_regions(
-  code VARCHAR(6) PRIMARY KEY,
+  code VARCHAR(10) PRIMARY KEY,
   name VARCHAR(60) UNIQUE NOT NULL,
   country_id VARCHAR(6) NOT NULL,
   code3166 VARCHAR(10) UNIQUE,
@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS state_or_regions(
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS cities_or_municipalities (
-  code VARCHAR(6) PRIMARY KEY,
-  name VARCHAR(60) UNIQUE,
-  statereg_id VARCHAR(6),
+  code VARCHAR(10) PRIMARY KEY,
+  name VARCHAR(60),
+  statereg_id VARCHAR(10),
   CONSTRAINT fk_statereg_id_cities_or_municipalities FOREIGN KEY (statereg_id) REFERENCES state_or_regions(code)
 ) ENGINE=INNODB;
 
