@@ -164,11 +164,61 @@ ORDER BY total_productos DESC
 LIMIT 5;
 
 -- 16
+SELECT p.id AS product_id,
+p.name 
+FROM detail_favorites AS df
+INNER JOIN products AS p ON df.product_id = p.id
+INNER JOIN favorites AS f ON df.favorite_id = f.id
+LEFT JOIN quality_products AS qp ON qp.product_id = p.id 
+LEFT JOIN quality_products AS qp2 ON qp2.customer_id = f.customer_id 
+LEFT JOIN quality_products AS qp3 ON qp3.company_id = f.company_id
+WHERE qp.rating IS NULL
+;
 
 -- 17
+SELECT a.id AS audience_id,
+a.description AS audience_description,
+b.id AS benefit_id,
+b.description AS benefit_description,
+b.detail AS benefit_detail
+FROM audience_benefits AS ab 
+INNER JOIN benefits AS b ON ab.benefit_id = b.id
+INNER JOIN audiences AS a ON ab.audience_id = a.id
+ORDER BY a.id, b.id
+;
 
 -- 18
+SELECT c.id AS company_id,
+c.name AS company_name,
+com.name AS city_name,
+com.code AS city_id
+FROM companies AS c 
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+LEFT JOIN company_products AS cp ON c.id = cp.company_id
+WHERE cp.company_id IS NULL 
+;
 
 -- 19
+SELECT DISTINCT cp.company_id,
+p1.id AS product_id,
+p1.name AS product_name
+FROM products AS p1
+-- el <> se usa para especificar diferencia
+JOIN products AS p2 ON p1.name = p2.name AND p1.id <> p2.id
+JOIN company_products AS cp ON p1.id = cp.product_id
+ORDER BY cp.company_id, p1.name;
 
 -- 20
+SELECT 
+c.id AS customer_id,
+c.name AS customer_name,
+p.id AS product_id,
+p.name AS product_name,
+AVG(qp.rating) AS promedio_calificacion
+FROM customers AS c
+INNER JOIN favorites AS f ON c.id = f.customer_id
+INNER JOIN detail_favorites AS df ON f.id = df.favorite_id
+INNER JOIN products AS p ON df.product_id = p.id
+LEFT JOIN quality_products AS qp ON p.id = qp.product_id
+GROUP BY c.id, c.name, p.id, p.name
+ORDER BY c.id, p.name;

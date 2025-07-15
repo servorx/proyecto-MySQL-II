@@ -2,7 +2,7 @@
 
 ### Las soluciones específicas se encuentran en la carpeta `scripts`, donde se pueden encontrar los 20 ejercicios de cada apartado en su respectivo archivo.
 
-#### A su vez, todos los inserts se encuentran en el archivo `dml.sql` y la creacion de las tablas en el archivo `ddl.sql`. Simplemente se copia y se pega todo el archivo dml para crear la base de datos y sus tablas para luego copiar y pegar todo el archivo de ddl y agregar las insersiones, ya en cada apartado de ejercicios se puede encontrar su respectivo archivo y solucion en este mismo readme o en la carpeta scripts
+A su vez, todos los inserts se encuentran en el archivo `dml.sql` y la creacion de las tablas en el archivo `ddl.sql`. Simplemente se copia y se pega todo el archivo dml para crear la base de datos y sus tablas para luego copiar y pegar todo el archivo de ddl y agregar las insersiones, ya en cada apartado de ejercicios se puede encontrar su respectivo archivo y solucion en este mismo readme o en la carpeta scripts
 
 # Historias de Usuario
 
@@ -181,27 +181,79 @@ ORDER BY promedio_rating DESC
 ```
 15. Como administrador, quiero listar empresas que ofrecen más de cinco productos distintos.
 ```sql
-
+SELECT c.name,
+COUNT(DISTINCT cp.product_id) AS total_productos 
+FROM companies AS c 
+INNER JOIN company_products AS cp ON c.id = cp.company_id
+GROUP BY c.id, c.name
+HAVING COUNT(DISTINCT cp.product_id) > 5
+ORDER BY total_productos DESC
+LIMIT 5;
 ```
 16. Como cliente, deseo visualizar los productos favoritos que aún no han sido calificados.
 ```sql
-
+SELECT p.id AS product_id,
+p.name 
+FROM detail_favorites AS df
+INNER JOIN products AS p ON df.product_id = p.id
+INNER JOIN favorites AS f ON df.favorite_id = f.id
+LEFT JOIN quality_products AS qp ON qp.product_id = p.id 
+LEFT JOIN quality_products AS qp2 ON qp2.customer_id = f.customer_id 
+LEFT JOIN quality_products AS qp3 ON qp3.company_id = f.company_id
+WHERE qp.rating IS NULL
+;
 ```
 17. Como desarrollador, deseo consultar los beneficios asignados a cada audiencia junto con su descripción.
 ```sql
-
+SELECT a.id AS audience_id,
+a.description AS audience_description,
+b.id AS benefit_id,
+b.description AS benefit_description,
+b.detail AS benefit_detail
+FROM audience_benefits AS ab 
+INNER JOIN benefits AS b ON ab.benefit_id = b.id
+INNER JOIN audiences AS a ON ab.audience_id = a.id
+ORDER BY a.id, b.id
+;
 ```
 18. Como operador logístico, quiero saber en qué ciudades hay empresas sin productos asociados.
 ```sql
-
+SELECT c.id AS company_id,
+c.name AS company_name,
+com.name AS city_name,
+com.code AS city_id
+FROM companies AS c 
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+LEFT JOIN company_products AS cp ON c.id = cp.company_id
+WHERE cp.company_id IS NULL 
+;
 ```
 19. Como técnico, deseo obtener todas las empresas con productos duplicados por nombre.
 ```sql
-
+SELECT DISTINCT cp.company_id,
+p1.id AS product_id,
+p1.name AS product_name
+FROM products AS p1
+-- el <> se usa para especificar diferencia
+JOIN products AS p2 ON p1.name = p2.name AND p1.id <> p2.id
+JOIN company_products AS cp ON p1.id = cp.product_id
+ORDER BY cp.company_id, p1.name;
 ```
 20. Como analista, quiero una vista resumen de clientes, productos favoritos y promedio de calificación recibido.
 ```sql
-
+SELECT 
+c.id AS customer_id,
+c.name AS customer_name,
+p.id AS product_id,
+p.name AS product_name,
+AVG(qp.rating) AS promedio_calificacion
+FROM customers AS c
+INNER JOIN favorites AS f ON c.id = f.customer_id
+INNER JOIN detail_favorites AS df ON f.id = df.favorite_id
+INNER JOIN products AS p ON df.product_id = p.id
+LEFT JOIN quality_products AS qp ON p.id = qp.product_id
+GROUP BY c.id, c.name, p.id, p.name
+ORDER BY c.id, p.name;
 ```
 
 ------
@@ -210,7 +262,18 @@ ORDER BY promedio_rating DESC
 
 1. Como gerente, quiero ver los productos cuyo precio esté por encima del promedio de su categoría.
 ```sql
-
+SELECT p.id AS product_id, 
+p.name AS product_name,
+p.price AS product_price,
+c.description AS category_name
+FROM products AS p
+INNER JOIN categories AS c ON p.category_id = c.id
+WHERE p.price > (
+  SELECT AVG(p2.price)
+  FROM products AS p2
+  WHERE p2.category_id = p.category_id
+)
+;
 ```
 2. Como administrador, deseo listar las empresas que tienen más productos que la media de empresas.
 ```sql
