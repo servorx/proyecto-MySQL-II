@@ -2,6 +2,21 @@ DROP DATABASE proyecto;
 CREATE DATABASE proyecto; 
 USE proyecto;
 
+
+CREATE TABLE IF NOT EXISTS dane_departments (
+  dane_code VARCHAR(2) PRIMARY KEY, -- Código de departamento DANE (ej. '05', '08')
+  name VARCHAR(60) UNIQUE NOT NULL  -- Nombre del departamento DANE (ej. 'Antioquia')
+) ENGINE=INNODB;
+
+-- Tabla para almacenar los municipios DANE
+CREATE TABLE IF NOT EXISTS dane_municipalities (
+  dane_department_code VARCHAR(2) NOT NULL,    -- Código de departamento DANE (FK a dane_departments)
+  dane_municipality_code VARCHAR(3) NOT NULL, -- Código de municipio DANE (ej. '001', '002')
+  name VARCHAR(60) NOT NULL,                  -- Nombre del municipio/ciudad DANE (ej. 'MEDELLIN')
+  PRIMARY KEY (dane_department_code, dane_municipality_code), 
+  CONSTRAINT fk_dane_department_mun FOREIGN KEY (dane_department_code) REFERENCES dane_departments(dane_code)
+) ENGINE=INNODB;
+
 --   tener en cuenta lo del varchar 2 porque en los registros de los paises toca colocar manualmente el codigo con 2 digitos, es decir, 0.5 y asi.
 CREATE TABLE IF NOT EXISTS countries (
   iso_code VARCHAR(6) PRIMARY KEY,
@@ -21,6 +36,8 @@ CREATE TABLE IF NOT EXISTS state_or_regions(
   country_id VARCHAR(6) NOT NULL,
   code3166 VARCHAR(10) UNIQUE,
   subdivision_id INT,
+  dane_department_code VARCHAR(2) UNIQUE,
+  CONSTRAINT fk_dane_department_code_state_or_regions FOREIGN KEY (dane_department_code) REFERENCES dane_departments (dane_code),
   CONSTRAINT fk_subdivision_id_state_or_regions FOREIGN KEY (subdivision_id) REFERENCES subdivision_categories(id),
   CONSTRAINT fk_country_id_state_or_regions FOREIGN KEY (country_id) REFERENCES countries(iso_code)
 ) ENGINE=INNODB;
@@ -29,7 +46,9 @@ CREATE TABLE IF NOT EXISTS cities_or_municipalities (
   code VARCHAR(10) PRIMARY KEY,
   name VARCHAR(60),
   statereg_id VARCHAR(10),
-  CONSTRAINT fk_statereg_id_cities_or_municipalities FOREIGN KEY (statereg_id) REFERENCES state_or_regions(code)
+  dane_department_code VARCHAR(2),
+  dane_municipality_code VARCHAR(3),
+  CONSTRAINT fk_dane_municipality_city FOREIGN KEY (dane_department_code, dane_municipality_code) REFERENCES dane_municipalities(dane_department_code, dane_municipality_code)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS types_identifications(
@@ -54,6 +73,13 @@ CREATE TABLE IF NOT EXISTS emails (
   email_type VARCHAR(60) UNIQUE NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS phones (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  phone_number VARCHAR(20) UNIQUE NOT NULL,
+  phone_country_code VARCHAR(10),
+  phone_type VARCHAR(10)
+) ENGINE=INNODB;
+
 CREATE TABLE IF NOT EXISTS companies (
   id INT PRIMARY KEY AUTO_INCREMENT,
   type_id INT,
@@ -61,15 +87,17 @@ CREATE TABLE IF NOT EXISTS companies (
   category_id INT,
   city_id VARCHAR(10),
   audience_id INT,
-  cellphone VARCHAR(15),
+  phone_id INT,
   email_id INT,
   isactive BOOLEAN,
   CONSTRAINT fk_type_id_companies FOREIGN KEY (type_id) REFERENCES types_identifications(id),
   CONSTRAINT fk_category_id_companies FOREIGN KEY (category_id) REFERENCES categories(id),
   CONSTRAINT fk_city_id_companies FOREIGN KEY (city_id) REFERENCES cities_or_municipalities(code),
   CONSTRAINT fk_audience_id_companies FOREIGN KEY (audience_id) REFERENCES audiences(id),
-  CONSTRAINT fk_email_id_companies FOREIGN KEY (email_id) REFERENCES emails(id)
+  CONSTRAINT fk_email_id_companies FOREIGN KEY (email_id) REFERENCES emails(id),
+  CONSTRAINT fk_phone_id_companies FOREIGN KEY (phone_id) REFERENCES phones(id)
 ) ENGINE=INNODB;
+
 
 CREATE TABLE IF NOT EXISTS memberships (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -157,18 +185,27 @@ CREATE TABLE IF NOT EXISTS polls (
   CONSTRAINT fk_categorypoll_id_polls FOREIGN KEY (categorypoll_id) REFERENCES categories_polls(id)
 ) ENGINE=INNODB;
 
+CREATE TABLE IF NOT EXISTS addresses (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  street_address VARCHAR(80) NOT NULL,
+  city_id VARCHAR(10) NOT NULL,
+  CONSTRAINT fk_city_id_addresses FOREIGN KEY (city_id) REFERENCES cities_or_municipalities(code)
+) ENGINE=INNODB;
+
 CREATE TABLE IF NOT EXISTS customers (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(80) NOT NULL,
-  city_id VARCHAR(10),
   audience_id INT,
-  cellphone VARCHAR(20),
+  phone_id INT,
   email_id INT,
-  address VARCHAR(120),
-  CONSTRAINT fk_city_id_customers FOREIGN KEY (city_id) REFERENCES cities_or_municipalities(code),
+  address_id INT,
   CONSTRAINT fk_audience_id_customers FOREIGN KEY (audience_id) REFERENCES audiences(id),
-  CONSTRAINT fk_email_id_customers FOREIGN KEY (email_id) REFERENCES emails(id)
+  CONSTRAINT fk_email_id_customers FOREIGN KEY (email_id) REFERENCES emails(id),
+  CONSTRAINT fk_address_id_customers FOREIGN KEY (address_id) REFERENCES addresses(id),
+  CONSTRAINT fk_phone_id_customers FOREIGN KEY (phone_id) REFERENCES phones(id)
 ) ENGINE=INNODB;
+
+
 
 CREATE TABLE IF NOT EXISTS quality_products (
   product_id INT,
