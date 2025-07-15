@@ -24,7 +24,7 @@ GROUP BY p.id, c.id, cm.code;
 ```sql
 SELECT c.id,
 c.name,
-SUM(qp.rating) AS calificaciones
+COUNT(qp.rating) AS total_calificaciones
 FROM customers AS c 
 INNER JOIN quality_products AS qp ON c.id = qp.customer_id
 WHERE qp.daterating >= NOW() - INTERVAL 6 MONTH
@@ -64,7 +64,7 @@ c.name,
 r.rating
 FROM companies AS c 
 INNER JOIN rates AS r ON c.id = r.company_id
-WHERE r.rating = NULL
+WHERE r.company_id IS NULL;
 ;
 ```
 6. Como operador, deseo obtener los productos que han sido añadidos como favoritos por más de 10 clientes distintos.
@@ -132,19 +132,52 @@ WHERE mb.benefit_id = NULL
 ```
 11. Como supervisor, quiero obtener los productos de una categoría específica con su promedio de calificación.
 ```sql
-
+SELECT p.id AS product_id,
+p.name,
+AVG(qp.rating) AS promedio_valoracion,
+c.description 
+FROM products AS p 
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+INNER JOIN categories AS c ON p.category_id = c.id
+WHERE c.id = 1
+GROUP BY p.id, p.name, c.description
+;
 ```
 12. Como asesor, deseo obtener los clientes que han comprado productos de más de una empresa.
 ```sql
-
+SELECT qp.customer_id, 
+c.name
+FROM quality_products AS qp  
+INNER JOIN customers AS c ON qp.customer_id = c.id
+INNER JOIN companies AS co ON qp.company_id = co.id
+GROUP BY qp.customer_id, c.name
+HAVING COUNT(DISTINCT qp.company_id) > 1
+;
 ```
 13. Como director, quiero identificar las ciudades con más clientes activos.
 ```sql
-
+SELECT com.code,
+com.name,
+COUNT(c.id) AS total_clientes 
+FROM customers AS c 
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+GROUP BY com.code, com.name
+ORDER BY COUNT(c.id) ASC
+;
 ```
 14. Como analista de calidad, deseo obtener el ranking de productos por empresa basado en la media de `quality_products`.
 ```sql
-
+SELECT 
+  cp.company_id,
+  p.id AS product_id,
+  p.name AS product_name,
+  AVG(qp.rating) AS promedio_rating
+FROM products AS p
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+GROUP BY cp.company_id, p.id, p.name
+ORDER BY promedio_rating DESC
+;
 ```
 15. Como administrador, quiero listar empresas que ofrecen más de cinco productos distintos.
 ```sql

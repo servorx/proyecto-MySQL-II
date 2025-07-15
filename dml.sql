@@ -1282,45 +1282,45 @@ INSERT INTO audiences (description) VALUES ('Consumidor Final (B2C)'),('Empresas
 INSERT INTO emails (email_name, email_type) VALUES('info@techsolutions.com', 'General'),('ventas@freshfoods.co', 'Ventas'),('soporte@fashionhub.net', 'Soporte'),('contacto@wellnesscenter.org', 'Contacto'),('admin@autocare.com', 'Administración'),('clientes@financepro.com', 'Clientes'),('admisiones@learnacademy.edu', 'Admisiones'),('reservas@funland.com', 'Reservas'),('pedidos@homegoods.shop', 'Pedidos'),('marketing@sportzone.com', 'Marketing'),('gerencia@globalsolutions.com', 'Gerencia'),('rrhh@corporation.com', 'Recursos Humanos'),('legal@lawfirm.com', 'Legal'),('facturacion@invoices.com', 'Facturación'),('partners@alliance.com', 'Partners'),('juan.perez@personal.com', 'Personal_Cliente_JP'), ('maria.gomez@personal.com', 'Personal_Cliente_MG'), ('carlos.ruiz@personal.com', 'Personal_Cliente_CR'), ('ana.lopez@personal.com', 'Personal_Cliente_AL'), ('pedro.martinez@personal.com', 'Personal_Cliente_PM'); 
 
 INSERT INTO phones (phone_number, phone_country_code, phone_type) VALUES
-('3101234567', '57', 'Mobile'),   -- ID 1
-('3112345678', '57', 'Mobile'),   -- ID 2
-('3123456789', '57', 'Mobile'),   -- ID 3
-('3154567890', '57', 'Mobile'),   -- ID 4
-('3165678901', '57', 'Mobile'),   -- ID 5
-('3006789012', '57', 'Mobile'),   -- ID 6
-('3017890123', '57', 'Mobile'),   -- ID 7
-('3108901234', '57', 'Mobile'),   -- ID 8
-('3119012345', '57', 'Mobile'),   -- ID 9
-('3120123456', '57', 'Mobile'),   -- ID 10
-('3151234567', '57', 'Mobile'),   -- ID 11
-('3162345678', '57', 'Mobile'),   -- ID 12
-('3003456789', '57', 'Mobile'),   -- ID 13
-('3014567890', '57', 'Mobile'),   -- ID 14
-('3105678901', '57', 'Mobile'),   -- ID 15
-('3001112233', '57', 'Mobile'),   -- ID 16
-('3012223344', '57', 'Mobile'),   -- ID 17
-('3103334455', '57', 'Mobile'),   -- ID 18
-('3114445566', '57', 'Mobile'),   -- ID 19
-('3125556677', '57', 'Mobile'),   -- ID 20
-('3156667788', '57', 'Mobile'),   -- ID 21
-('3167778899', '57', 'Mobile');   -- ID 22
+('3101234567', '57', 'Mobile'),   
+('3112345678', '57', 'Mobile'),   
+('3123456789', '57', 'Mobile'),  
+('3154567890', '57', 'Mobile'),   
+('3165678901', '57', 'Mobile'),   
+('3006789012', '57', 'Mobile'),  
+('3017890123', '57', 'Mobile'),  
+('3108901234', '57', 'Mobile'),   
+('3119012345', '57', 'Mobile'),   
+('3120123456', '57', 'Mobile'),   
+('3151234567', '57', 'Mobile'),   
+('3162345678', '57', 'Mobile'),   
+('3003456789', '57', 'Mobile'),  
+('3014567890', '57', 'Mobile'),   
+('3105678901', '57', 'Mobile'),   
+('3001112233', '57', 'Mobile'),   
+('3012223344', '57', 'Mobile'),   
+('3103334455', '57', 'Mobile'),   
+('3114445566', '57', 'Mobile'),   
+('3125556677', '57', 'Mobile'),   
+('3156667788', '57', 'Mobile'),   
+('3167778899', '57', 'Mobile');   
 
 INSERT INTO companies (type_id, name, category_id, city_id, audience_id, phone_id, email_id, isactive) VALUES
-(6, 'Tech Solutions S.A.S.', 1, '57-1-BOG', 2, 1, 1, TRUE),    -- Phone ID 1 for '3101234567'
-(6, 'Fresh Foods Ltda.', 2, '57-4-MED', 1, 2, 2, TRUE),       -- Phone ID 2 for '3112345678'
-(6, 'Fashion Hub Store', 3, '57-2-CAL', 1, 3, 3, FALSE),      -- Phone ID 3 for '3123456789'
-(1, 'Wellness Center SAS', 4, '57-7-BUC', 5, 4, 4, TRUE),     -- Phone ID 4 for '3154567890'
-(6, 'AutoCare Services', 5, '57-5-BAR', 1, 5, 5, FALSE),      -- Phone ID 5 for '3165678901'
-(6, 'Finance Pro Group', 6, '57-1-BOG', 2, 6, 6, TRUE),       -- Phone ID 6 for '3006789012'
-(6, 'Learn Academy', 7, '57-7-CUC', 3, 7, 7, FALSE),          -- Phone ID 7 for '3017890123'
-(6, 'FunLand Park', 8, '57-5-CAR', 4, 8, 8, TRUE),            -- Phone ID 8 for '3108901234'
-(6, 'HomeGoods Express', 9, '57-6-PER', 1, 9, 9, TRUE),       -- Phone ID 9 for '3119012345'
-(6, 'SportZone Colombia', 10, '57-8-IBA', 1, 10, 10, FALSE),   -- Phone ID 10 for '3120123456'
-(6, 'Global Solutions Corp.', 1, '57-1-BOG', 2, 11, 11, TRUE), -- Phone ID 11 for '3151234567'
-(6, 'Constructora XYZ', 9, '57-4-MED', 2, 12, 12, FALSE),     -- Phone ID 12 for '3162345678'
-(6, 'Bufete Legal Asociados', NULL, '57-1-BOG', 5, 13, 13, TRUE), -- Phone ID 13 for '3003456789'
-(6, 'Distribuidora del Café', 2, '57-6-MAN', 2, 14, 14, TRUE), -- Phone ID 14 for '3014567890'
-(6, 'Agencia de Viajes Aventura', NULL, '57-8-NEI', 7, 15, 15, FALSE); -- Phone ID 15 for '3105678901'
+(6, 'Tech Solutions S.A.S.', 1, '57-1-BOG', 2, 1, 1, TRUE),    
+(6, 'Fresh Foods Ltda.', 2, '57-4-MED', 1, 2, 2, TRUE),       
+(6, 'Fashion Hub Store', 3, '57-2-CAL', 1, 3, 3, FALSE),     
+(1, 'Wellness Center SAS', 4, '57-7-BUC', 5, 4, 4, TRUE),     
+(6, 'AutoCare Services', 5, '57-5-BAR', 1, 5, 5, FALSE),     
+(6, 'Finance Pro Group', 6, '57-1-BOG', 2, 6, 6, TRUE),      
+(6, 'Learn Academy', 7, '57-7-CUC', 3, 7, 7, FALSE),          
+(6, 'FunLand Park', 8, '57-5-CAR', 4, 8, 8, TRUE),            
+(6, 'HomeGoods Express', 9, '57-6-PER', 1, 9, 9, TRUE),       
+(6, 'SportZone Colombia', 10, '57-8-IBA', 1, 10, 10, FALSE),   
+(6, 'Global Solutions Corp.', 1, '57-1-BOG', 2, 11, 11, TRUE), 
+(6, 'Constructora XYZ', 9, '57-4-MED', 2, 12, 12, FALSE),     
+(6, 'Bufete Legal Asociados', NULL, '57-1-BOG', 5, 13, 13, TRUE), 
+(6, 'Distribuidora del Café', 2, '57-6-MAN', 2, 14, 14, TRUE), 
+(6, 'Agencia de Viajes Aventura', NULL, '57-8-NEI', 7, 15, 15, FALSE); 
 
 INSERT INTO memberships (name, description) VALUES ('Básica', 'Acceso a funciones esenciales y soporte estándar.'),('Premium', 'Acceso completo a todas las funciones, soporte prioritario y descuentos exclusivos.'),('Empresarial', 'Membresía diseñada para grandes empresas con necesidades avanzadas.'),('Estudiante', 'Membresía con descuento para estudiantes, acceso limitado a recursos.'),('VIP', 'Membresía de élite con beneficios personalizados y eventos exclusivos.');
 
@@ -1354,13 +1354,13 @@ INSERT INTO addresses (street_address, city_id) VALUES
 ('Circular 74 # 30-05', '57-4-MED');    
 
 INSERT INTO customers (name, city_id, audience_id, phone_id, email_id, address_id) VALUES
-('Juan Pérez', '57-1-BOG', 1, 16, 16, 1),   -- Phone ID 16, Address ID 1
-('María Gómez', '57-4-MED', 1, 17, 17, 2), -- Phone ID 17, Address ID 2
-('Carlos Ruiz', '57-2-CAL', 5, 18, 18, 3),  -- Phone ID 18, Address ID 3
-('Ana López', '57-7-BUC', 4, 19, 19, 4), -- Phone ID 19, Address ID 4
-('Pedro Martínez', '57-5-BAR', 3, 20, 20, 5), -- Phone ID 20, Address ID 5
-('Laura Sánchez', '57-1-BOG', 1, 21, 16, 6), -- Phone ID 21, Address ID 6
-('Sofía Torres', '57-4-MED', 1, 22, 17, 7); -- Phone ID 22, Address ID 7
+('Juan Pérez', '57-1-BOG', 1, 16, 16, 1),   
+('María Gómez', '57-4-MED', 1, 17, 17, 2), 
+('Carlos Ruiz', '57-2-CAL', 5, 18, 18, 3), 
+('Ana López', '57-7-BUC', 4, 19, 19, 4), 
+('Pedro Martínez', '57-5-BAR', 3, 20, 20, 5), 
+('Laura Sánchez', '57-1-BOG', 1, 21, 16, 6), 
+('Sofía Torres', '57-4-MED', 1, 22, 17, 7); 
 
 INSERT INTO quality_products (product_id, customer_id, poll_id, company_id, daterating, rating) VALUES(1, 1, 2, 1, '2024-06-15 10:00:00', 4.5), (2, 2, 7, 2, '2024-06-16 11:30:00', 4.8), (3, 1, 1, 3, '2024-06-17 14:00:00', 4.0), (11, 3, 2, 1, '2024-06-18 09:00:00', 4.2), (12, 4, 7, 2, '2024-06-19 10:15:00', 4.9), (7, 5, 1, 7, '2024-06-20 16:00:00', 4.7), (1, 6, 2, 1, '2024-06-21 17:00:00', 4.6), (2, 7, 7, 2, '2024-06-22 08:00:00', 4.7); 
 

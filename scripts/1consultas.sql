@@ -12,7 +12,7 @@ GROUP BY p.id, c.id, cm.code;
 -- 2
 SELECT c.id,
 c.name,
-SUM(qp.rating) AS calificaciones
+COUNT(qp.rating) AS total_calificaciones
 FROM customers AS c 
 INNER JOIN quality_products AS qp ON c.id = qp.customer_id
 WHERE qp.daterating >= NOW() - INTERVAL 6 MONTH
@@ -49,7 +49,7 @@ c.name,
 r.rating
 FROM companies AS c 
 INNER JOIN rates AS r ON c.id = r.company_id
-WHERE r.rating = NULL
+WHERE r.company_id IS NULL;
 ;
 
 -- 6
@@ -97,24 +97,78 @@ uom.id
 FROM products AS p 
 INNER JOIN company_products AS cp ON p.id = cp.product_id
 INNER JOIN unit_of_measure AS uom ON cp.unitmeasure_id = uom.id
-WHERE uom.id = NULL
+WHERE uom.id IS NULL
 ; 
 
 -- 10 
 SELECT m.id AS membership_id,
-m.name,
-m.description,
-mb.benefit_id
-FROM memberships AS m 
-INNER JOIN membership_benefits AS mb ON m.id = mb.membership_id  
-WHERE mb.benefit_id = NULL
-; 
+m.name
+FROM memberships AS m
+LEFT JOIN membership_benefits AS mb ON m.id = mb.membership_id
+WHERE mb.benefit_id IS NULL
+;
 
 -- 11
 SELECT p.id AS product_id,
 p.name,
-AVG(p.)
+AVG(qp.rating) AS promedio_valoracion,
+c.description 
 FROM products AS p 
-INNER JOIN 
-GROUP BY 
-WHERE 
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+INNER JOIN categories AS c ON p.category_id = c.id
+WHERE c.id = 1
+GROUP BY p.id, p.name, c.description
+;
+
+-- 12
+SELECT qp.customer_id, 
+c.name
+FROM quality_products AS qp  
+INNER JOIN customers AS c ON qp.customer_id = c.id
+INNER JOIN companies AS co ON qp.company_id = co.id
+GROUP BY qp.customer_id, c.name
+HAVING COUNT(DISTINCT qp.company_id) > 1
+;
+
+-- 13
+SELECT com.code,
+com.name,
+COUNT(c.id) AS total_clientes 
+FROM customers AS c 
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+GROUP BY com.code, com.name
+ORDER BY COUNT(c.id) ASC
+;
+
+-- 14
+SELECT 
+  cp.company_id,
+  p.id AS product_id,
+  p.name AS product_name,
+  AVG(qp.rating) AS promedio_rating
+FROM products AS p
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+GROUP BY cp.company_id, p.id, p.name
+ORDER BY promedio_rating DESC
+;
+
+-- 15
+SELECT c.name,
+COUNT(DISTINCT cp.product_id) AS total_productos 
+FROM companies AS c 
+INNER JOIN company_products AS cp ON c.id = cp.company_id
+GROUP BY c.id, c.name
+HAVING COUNT(DISTINCT cp.product_id) > 5
+ORDER BY total_productos DESC
+LIMIT 5;
+
+-- 16
+
+-- 17
+
+-- 18
+
+-- 19
+
+-- 20
