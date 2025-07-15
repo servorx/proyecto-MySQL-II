@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS companies (
   audience_id INT,
   cellphone VARCHAR(15),
   email_id INT,
+  isactive BOOLEAN,
   CONSTRAINT fk_type_id_companies FOREIGN KEY (type_id) REFERENCES types_identifications(id),
   CONSTRAINT fk_category_id_companies FOREIGN KEY (category_id) REFERENCES categories(id),
   CONSTRAINT fk_city_id_companies FOREIGN KEY (city_id) REFERENCES cities_or_municipalities(code),

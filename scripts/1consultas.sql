@@ -62,3 +62,59 @@ INNER JOIN products AS p ON df.product_id = p.id
 GROUP BY df.product_id, p.name
 HAVING COUNT(DISTINCT f.customer_id) > 10;
 
+-- 7 
+SELECT 
+com.code AS city_id,
+com.name AS city_name,
+ca.description AS category,
+COUNT(co.id) AS total_empresas
+FROM companies AS co 
+INNER JOIN cities_or_municipalities AS com ON co.city_id = com.code 
+INNER JOIN categories AS ca ON co.category_id = ca.id
+WHERE co.isactive = TRUE
+GROUP BY com.code, com.name, ca.description;
+
+-- 8 
+SELECT p.id product_id, 
+p.name AS name_product,
+COUNT(df.id) AS cantidad_calificaciones,
+com.name AS ciudad_nombre,
+c.city_id AS city_id
+FROM products AS p 
+INNER JOIN detail_favorites AS df ON p.id = df.product_id
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+INNER JOIN companies AS c ON cp.company_id = c.id
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+GROUP BY p.id, p.name, com.name, c.city_id
+ORDER BY COUNT(df.id) DESC
+LIMIT 10
+;
+
+-- 9
+SELECT p.id AS product_id,
+p.name,
+uom.id
+FROM products AS p 
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+INNER JOIN unit_of_measure AS uom ON cp.unitmeasure_id = uom.id
+WHERE uom.id = NULL
+; 
+
+-- 10 
+SELECT m.id AS membership_id,
+m.name,
+m.description,
+mb.benefit_id
+FROM memberships AS m 
+INNER JOIN membership_benefits AS mb ON m.id = mb.membership_id  
+WHERE mb.benefit_id = NULL
+; 
+
+-- 11
+SELECT p.id AS product_id,
+p.name,
+AVG(p.)
+FROM products AS p 
+INNER JOIN 
+GROUP BY 
+WHERE 

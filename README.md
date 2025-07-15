@@ -80,19 +80,55 @@ HAVING COUNT(DISTINCT f.customer_id) > 10;
 ```
 7. Como gerente regional, quiero obtener todas las empresas activas por ciudad y categoría.
 ```sql
-
+SELECT 
+com.code AS city_id,
+com.name AS city_name,
+ca.description AS category,
+COUNT(co.id) AS total_empresas
+FROM companies AS co 
+INNER JOIN cities_or_municipalities AS com ON co.city_id = com.code 
+INNER JOIN categories AS ca ON co.category_id = ca.id
+WHERE co.isactive = TRUE
+GROUP BY com.code, com.name, ca.description;
 ```
 8. Como especialista en marketing, deseo obtener los 10 productos más calificados en cada ciudad.
 ```sql
-
+SELECT p.id product_id, 
+p.name AS name_product,
+COUNT(df.id) AS cantidad_calificaciones,
+com.name AS ciudad_nombre,
+c.city_id AS city_id
+FROM products AS p 
+INNER JOIN detail_favorites AS df ON p.id = df.product_id
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+INNER JOIN companies AS c ON cp.company_id = c.id
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+GROUP BY p.id, p.name, com.name, c.city_id
+ORDER BY COUNT(df.id) DESC
+LIMIT 10
+;
 ```
 9. Como técnico, quiero identificar productos sin unidad de medida asignada.
 ```sql
-
+SELECT p.id AS product_id,
+p.name,
+uom.id
+FROM products AS p 
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+INNER JOIN unit_of_measure AS uom ON cp.unitmeasure_id = uom.id
+WHERE uom.id = NULL
+; 
 ```
 10. Como gestor de beneficios, deseo ver los planes de membresía sin beneficios registrados.
 ```sql
-
+SELECT m.id AS membership_id,
+m.name,
+m.description,
+mb.benefit_id
+FROM memberships AS m 
+INNER JOIN membership_benefits AS mb ON m.id = mb.membership_id  
+WHERE mb.benefit_id = NULL
+; 
 ```
 11. Como supervisor, quiero obtener los productos de una categoría específica con su promedio de calificación.
 ```sql
