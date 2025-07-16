@@ -376,55 +376,178 @@ WHERE com.code NOT IN (
 ```
 8. Como administrador, quiero ver los productos que no han sido evaluados en ninguna encuesta.
 ```sql
-
+SELECT p.id AS product_id,
+p.name AS product_name
+FROM products AS p 
+WHERE p.id NOT IN (
+  SELECT DISTINCT qp.product_id
+  FROM quality_products AS qp 
+  WHERE qp.product_id IS NOT NULL 
+)
+ORDER BY p.id
+;
 ```
 9. Como auditor, quiero listar los beneficios que no están asignados a ninguna audiencia.
 ```sql
-
+SELECT b.id,
+b.description,
+b.detail
+FROM benefits AS b 
+WHERE b.id NOT IN  (
+  SELECT ab.benefit_id
+  FROM audience_benefits AS ab 
+  WHERE ab.benefit_id IS NOT NULL
+)
+;
 ```
 10. Como cliente, deseo obtener mis productos favoritos que no están disponibles actualmente en ninguna empresa.
 ```sql
-
+SELECT p.id,
+p.name
+FROM products AS p 
+INNER JOIN detail_favorites AS df ON p.id = df.product_id
+WHERE p.id NOT IN (
+  SELECT cp.product_id
+  FROM company_products AS cp
+)
+;
 ```
 11. Como director, deseo consultar los productos vendidos en empresas cuya ciudad tenga menos de tres empresas registradas.
 ```sql
-
+SELECT p.id,
+p.name
+FROM products AS p 
+INNER JOIN company_products AS cp ON p.id = cp.product_id
+INNER JOIN companies AS c ON cp.company_id = c.id
+WHERE c.city_id IN (
+  SELECT city_id
+  FROM companies  
+  GROUP BY city_id
+  HAVING COUNT(*) < 3
+)
+ORDER BY p.id ASC 
+;
 ```
 12. Como analista, quiero ver los productos con calidad superior al promedio de todos los productos.
 ```sql
-
+SELECT p.id,
+p.name AS product_name,
+qp.rating 
+FROM products AS p 
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+WHERE qp.rating > (
+  SELECT AVG(rating)
+  FROM quality_products
+)
+;
 ```
 13. Como gestor, quiero ver empresas que sólo venden productos de una única categoría.
 ```sql
-
+SELECT c.id AS company_id,
+c.name,
+ca.description AS category
+FROM companies AS c 
+INNER JOIN categories AS ca ON c.category_id = ca.id
+WHERE c.id IN (
+  SELECT cp.company_id
+  FROM company_products AS cp 
+  INNER JOIN products AS p ON cp.product_id = p.id
+  GROUP BY cp.company_id
+  HAVING COUNT(DISTINCT category_id) = 1
+)
+ORDER BY c.id
+;
 ```
 14. Como gerente comercial, quiero consultar los productos con el mayor precio entre todas las empresas.
 ```sql
-
+SELECT p.id,
+p.name,
+p.price
+FROM products AS p 
+WHERE p.price IN (
+  SELECT MAX(price)
+  FROM products
+)
+;
 ```
 15. Como cliente, quiero saber si algún producto de mis favoritos ha sido calificado por otro cliente con más de 4 estrellas.
 ```sql
-
+SELECT p.id AS product_id,
+p.name AS product_name,
+qp.rating
+FROM products AS p
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+WHERE qp.customer_id != ALL (
+  SELECT f.customer_id
+  FROM favorites AS f
+  INNER JOIN detail_favorites AS df ON f.id = df.favorite_id
+  WHERE df.product_id = p.id
+)
+AND qp.rating > 4;
 ```
 16. Como operador, quiero saber qué productos no tienen imagen asignada pero sí han sido calificados.
 ```sql
-
+SELECT p.id AS product_id,
+p.name,
+qp.rating 
+FROM products AS p 
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+WHERE p.image IS NULL AND qp.rating IN (
+  SELECT rating
+  FROM quality_products 
+  WHERE rating IS NOT NULL 
+)
+;
 ```
 17. Como auditor, quiero ver los planes de membresía sin periodo vigente.
 ```sql
-
+SELECT m.id,
+m.name
+FROM memberships AS m
+WHERE m.id NOT IN (
+  SELECT DISTINCT membership_id
+  FROM membership_periods 
+)
+;
 ```
 18. Como especialista, quiero identificar los beneficios compartidos por más de una audiencia.
 ```sql
-
+SELECT b.id AS benefit_id,
+b.description
+FROM benefits AS b
+WHERE b.id IN (
+  SELECT ab.benefit_id
+  FROM audience_benefits AS ab
+  GROUP BY ab.benefit_id
+  HAVING COUNT(DISTINCT ab.audience_id) > 1
+)
+;
 ```
 19. Como técnico, quiero encontrar empresas cuyos productos no tengan unidad de medida definida.
 ```sql
+-- todos tienen medids definidas
+SELECT c.id AS company_id,
+c.name
+FROM companies AS c
+WHERE c.id IN (
+  SELECT cp.company_id
+  FROM company_products AS cp
+  WHERE cp.unitmeasure_id IS NULL
+);
 
 ```
 20. Como gestor de campañas, deseo obtener los clientes con membresía activa y sin productos favoritos.
 ```sql
-
+SELECT cu.id,
+cu.name
+FROM customers AS cu
+WHERE cu.audience_id IN (
+  SELECT mb.audience_id
+  FROM membership_benefits AS mb
+) AND cu.id NOT IN (
+  SELECT f.customer_id
+  FROM favorites AS f
+);
 ```
 
 ------
