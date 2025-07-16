@@ -668,7 +668,6 @@ SELECT
 FROM customers AS c 
 INNER JOIN addresses AS a ON c.address_id = a.id 
 GROUP BY a.city_id;
-
 ```
    ------
 
@@ -679,7 +678,10 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Sirve para ver **qué tantos planes están vigentes cada mes o trimestre**. Se agrupa por periodo (`start_date`, `end_date`) y se cuenta cuántos registros hay.
 ```sql
-
+SELECT COUNT(mp.membership_id) as cantidad_planes_membresia
+FROM membership_periods AS mp  
+GROUP BY mp.period_id
+;
 ```
    ------
 
@@ -690,7 +692,13 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     El cliente quiere saber **cómo ha calificado lo que más le gusta**. Se hace un `JOIN` entre favoritos y calificaciones, y se saca `AVG(rating)`.
 ```sql
-
+SELECT c.id,
+c.name,
+AVG(rating) promedio_rating
+FROM customers AS c 
+INNER JOIN quality_products AS qp ON c.id = qp.customer_id
+GROUP BY c.id
+; 
 ```
    ------
 
@@ -701,7 +709,9 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Busca el `MAX(created_at)` agrupado por producto. Así sabe **cuál fue la última vez que se evaluó cada uno**.
 ```sql
-
+SELECT MAX(qp.daterating) AS fecha_mas_reciente 
+FROM quality_products AS qp 
+;
 ```
    ------
 
@@ -712,7 +722,12 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Usando `STDDEV(price)` en `companyproducts` agrupado por `category_id`, se puede ver **si hay mucha diferencia de precios dentro de una categoría**.
 ```sql
-
+SELECT 
+p.category_id,
+STDDEV(cp.price) AS variacion
+FROM company_products AS cp 
+INNER JOIN products AS p ON cp.product_id = p.id
+GROUP BY p.category_id;
 ```
    ------
 
@@ -723,7 +738,11 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Con `COUNT(*)` en `details_favorites`, agrupado por `product_id`, se obtiene **cuáles productos son los más populares entre los clientes**.
 ```sql
-
+SELECT COUNT(*) AS cantidad_veces_marcado,
+product_id
+FROM detail_favorites 
+GROUP BY product_id
+;
 ```
    ------
 
@@ -734,7 +753,11 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Cuenta cuántos productos hay en total y cuántos han sido evaluados (`rates`). Luego calcula `(evaluados / total) * 100`.
 ```sql
-
+SELECT ROUND(
+    (SELECT COUNT(DISTINCT product_id) FROM quality_products) * 100.0 /
+    (SELECT COUNT(*) FROM products), 2
+) AS porcentaje_calificados
+;
 ```
    ------
 
@@ -745,7 +768,11 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Agrupa por `poll_id` en `rates`, y calcula el `AVG(rating)` para ver **cómo se comportó cada encuesta**.
 ```sql
-
+SELECT 
+AVG(rating) AS promedio_rating
+FROM rates
+GROUP BY poll_id
+;
 ```
    ------
 
@@ -756,7 +783,13 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Agrupa por `membership_id` en `membershipbenefits`, y usa `COUNT(*)` y `AVG(beneficio)` si aplica (si hay ponderación).
 ```sql
-
+SELECT 
+membership_id,
+COUNT(*) AS total_beneficios,
+AVG(benefit_id) AS promedio_id_beneficio
+FROM membership_benefits
+GROUP BY membership_id
+;
 ```
    ------
 
@@ -767,7 +800,13 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Se agrupa por `company_id` y se usa `AVG(price)` y `VARIANCE(price)` para saber **qué tan consistentes son los precios por empresa**.
 ```sql
-
+SELECT 
+company_id,
+AVG(price) AS promedio_precio,
+VARIANCE(price) AS varianza_precio
+FROM company_products
+GROUP BY company_id
+;
 ```
    ------
 
@@ -778,7 +817,18 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Hace un `JOIN` entre `companies`, `companyproducts` y `citiesormunicipalities`, filtrando por la ciudad del cliente. Luego se cuenta.
 ```sql
-
+SELECT 
+c.id AS customer_id,
+c.name AS customer_name,
+com.name AS customer_city,
+COUNT(DISTINCT cp.product_id) AS total_available_products
+FROM customers AS cu
+INNER JOIN addresses AS a ON cu.address_id = a.id 
+INNER JOIN cities_or_municipalities AS com ON a.city_id = com.code
+INNER JOIN companies AS c ON c.city_id = com.code
+INNER JOIN company_products AS cp ON c.id = cp.company_id
+GROUP BY c.id, c.name, com.name
+;
 ```
    ------
 
@@ -789,7 +839,15 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Agrupa por `company_type_id` y cuenta cuántos productos diferentes tiene cada tipo de empresa.
 ```sql
-
+SELECT 
+c.type_id,
+ti.description AS tipo,
+COUNT(DISTINCT cp.product_id) AS productos_unicos
+FROM companies AS c
+INNER JOIN company_products AS cp ON c.id = cp.company_id
+INNER JOIN types_identifications AS ti ON c.type_id = ti.id 
+GROUP BY c.type_id, ti.id
+;
 ```
    ------
 
@@ -800,7 +858,10 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Filtra `customers WHERE email IS NULL` y hace un `COUNT(*)`. Esto ayuda a mejorar la base de datos para campañas.
 ```sql
-
+SELECT 
+  COUNT(*) AS clientes_sin_email
+FROM customers
+WHERE email_id IS NULL;
 ```
    ------
 
@@ -811,7 +872,15 @@ GROUP BY a.city_id;
    🔍 **Explicación:**
     Hace un `JOIN` entre `companies`, `companyproducts`, y `rates`, agrupa por empresa y usa `COUNT(DISTINCT product_id)`, ordenando en orden descendente y tomando solo el primero.
 ```sql
-
+SELECT c.id,
+c.name,
+COUNT(DISTINCT product_id) AS total_calificados
+FROM companies AS c 
+INNER JOIN company_products AS cp ON c.id = cp.company_id
+INNER JOIN rates AS r ON c.id = r.company_id
+GROUP BY c.id
+ORDER BY total_calificados DESC
+LIMIT 1;
 ```
 ------
 
