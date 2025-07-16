@@ -561,7 +561,13 @@ WHERE cu.audience_id IN (
    🔍 **Explicación para dummies:**
     La persona encargada de revisar el rendimiento quiere saber **qué tan bien calificado está cada producto**. Con `AVG(rating)` agrupado por `product_id`, puede verlo de forma resumida.
 ```sql
-
+SELECT p.id,
+p.name,
+AVG(qp.rating)
+FROM products AS p
+INNER JOIN quality_products AS qp ON p.id = qp.product_id
+GROUP BY p.id, p.name
+;
 ```
 
    ------
@@ -573,7 +579,13 @@ WHERE cu.audience_id IN (
    🔍 **Explicación:**
     Aquí se quiere saber **quiénes están activos opinando**. Se usa `COUNT(*)` sobre `rates`, agrupando por `customer_id`.
 ```sql
-
+SELECT c.id AS customer_id,
+c.name customer_name, 
+COUNT(*) AS productos_calificados 
+FROM customers AS c 
+INNER JOIN quality_products AS qp ON c.id = qp.customer_id
+GROUP BY c.id
+;
 ```
 
    ------
@@ -585,7 +597,10 @@ WHERE cu.audience_id IN (
    🔍 **Explicación:**
     El auditor busca **cuántos beneficios tiene cada tipo de usuario**. Con `COUNT(*)` agrupado por `audience_id` en `audiencebenefits`, lo obtiene.
 ```sql
-
+SELECT ab.audience_id,
+COUNT(ab.benefit_id) AS beneficios_audiencia
+FROM audience_benefits AS ab
+GROUP BY ab.audience_id;
 ```
    ------
 
@@ -596,7 +611,12 @@ WHERE cu.audience_id IN (
    🔍 **Explicación:**
     El administrador quiere saber si **las empresas están ofreciendo pocos o muchos productos**. Cuenta los productos por empresa y saca el promedio con `AVG(cantidad)`.
 ```sql
-
+SELECT AVG(cp.product_id) AS productos_compañia,
+c.name AS company_name 
+FROM company_products AS cp 
+INNER JOIN companies AS c ON cp.company_id = c.id
+GROUP BY cp.company_id
+;
 ```
    ------
 
