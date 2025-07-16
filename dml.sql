@@ -1346,14 +1346,14 @@ INSERT INTO addresses (street_address, city_id) VALUES
 ('Diagonal 100 # 15-50', '57-1-BOG'),   
 ('Circular 74 # 30-05', '57-4-MED');    
 
-INSERT INTO customers (name, city_id, audience_id, phone_id, email_id, address_id) VALUES
-('Juan Pérez', '57-1-BOG', 1, 16, 16, 1),   
-('María Gómez', '57-4-MED', 1, 17, 17, 2), 
-('Carlos Ruiz', '57-2-CAL', 5, 18, 18, 3), 
-('Ana López', '57-7-BUC', 4, 19, 19, 4), 
-('Pedro Martínez', '57-5-BAR', 3, 20, 20, 5), 
-('Laura Sánchez', '57-1-BOG', 1, 21, 16, 6), 
-('Sofía Torres', '57-4-MED', 1, 22, 17, 7); 
+INSERT INTO customers (name, audience_id, phone_id, email_id, address_id) VALUES
+('Juan Pérez', 1, 16, 16, 1),   
+('María Gómez', 1, 17, 17, 2), 
+('Carlos Ruiz', 5, 18, 18, 3), 
+('Ana López', 4, 19, 19, 4), 
+('Pedro Martínez', 3, 20, 20, 5), 
+('Laura Sánchez', 1, 21, 16, 6), 
+('Sofía Torres', 1, 22, 17, 7); 
 
 INSERT INTO quality_products (product_id, customer_id, poll_id, company_id, daterating, rating) VALUES(1, 1, 2, 1, '2024-06-15 10:00:00', 4.5), (2, 2, 7, 2, '2024-06-16 11:30:00', 4.8), (3, 1, 1, 3, '2024-06-17 14:00:00', 4.0), (11, 3, 2, 1, '2024-06-18 09:00:00', 4.2), (12, 4, 7, 2, '2024-06-19 10:15:00', 4.9), (7, 5, 1, 7, '2024-06-20 16:00:00', 4.7), (1, 6, 2, 1, '2024-06-21 17:00:00', 4.6), (2, 7, 7, 2, '2024-06-22 08:00:00', 4.7); 
 

@@ -192,7 +192,6 @@ CREATE TABLE IF NOT EXISTS addresses (
 CREATE TABLE IF NOT EXISTS customers (
   id INT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(80) NOT NULL,
-  city_id VARCHAR(10),
   audience_id INT,
   phone_id INT,
   email_id INT,

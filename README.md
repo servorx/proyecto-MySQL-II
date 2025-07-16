@@ -627,7 +627,14 @@ GROUP BY cp.company_id
    🔍 **Explicación:**
     La idea es ver **en qué ciudades hay más movimiento empresarial**. Se usa `COUNT(*)` en `companies`, agrupando por `city_id`.
 ```sql
-
+SELECT SUM(c.id) AS total_empresas,
+c.city_id,
+com.name
+FROM companies AS c
+INNER JOIN cities_or_municipalities AS com ON c.city_id = com.code
+GROUP BY c.city_id
+ORDER BY total_empresas ASC
+;
 ```
    ------
 
@@ -638,7 +645,13 @@ GROUP BY cp.company_id
    🔍 **Explicación:**
     Se necesita saber si **los precios son coherentes según el tipo de medida**. Con `AVG(price)` agrupado por `unit_id`, se compara cuánto cuesta el litro, kilo, unidad, etc.
 ```sql
-
+SELECT AVG(p.price) AS promedio_precio,
+uom.description
+FROM products AS p
+INNER JOIN company_products AS cp ON p.id = cp.product_id   
+INNER JOIN unit_of_measure AS uom ON cp.unitmeasure_id = uom.id
+GROUP BY uom.id
+;
 ```
    ------
 
@@ -649,6 +662,12 @@ GROUP BY cp.company_id
    🔍 **Explicación:**
     Con `COUNT(*)` agrupado por `city_id` en la tabla `customers`, se obtiene **la cantidad de clientes que hay en cada zona**.
 ```sql
+SELECT 
+  a.city_id,
+  COUNT(*) AS clientes_por_ciudad
+FROM customers AS c 
+INNER JOIN addresses AS a ON c.address_id = a.id 
+GROUP BY a.city_id;
 
 ```
    ------
