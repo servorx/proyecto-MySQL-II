@@ -110,22 +110,69 @@ CALL resumen_mensual();
 DELIMITER $$
 CREATE PROCEDURE beneficios_activos()
 BEGIN
-  SELECT 
-  FROM membership_benefits AS mb 
-  INNER JOIN  membership_periods AS mp ON 
-  WHERE 
+  SELECT mb.benefit_id
+  FROM membership_benefits AS mb
+  INNER JOIN membership_periods AS mp ON mb.membership_id = mp.membership_id
+  INNER JOIN periods AS p ON mp.period_id = p.id
+  WHERE CURRENT_DATE BETWEEN p.start_date AND p.end_date;
 END $$
 DELIMITER ;
 
 -- Llamar procedimiento
-CALL beneficios_activos(valor1, 'valor2');
+CALL beneficios_activos();
 
 -- 6
+DELIMITER $$
+CREATE PROCEDURE eliminar_producto_huerfano()
+BEGIN
+  DELETE FROM products AS p
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM quality_products AS qp
+    WHERE qp.product_id = p.id
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM company_products AS cp
+    WHERE cp.product_id = p.id
+  );
+END $$
+DELIMITER ;
+
+-- Llamar procedimiento
+CALL eliminar_producto_huerfano();
 
 -- 7
+DELIMITER $$
+CREATE PROCEDURE categoria_actualizar_precio(
+  IN cap_categoria_id INT,
+  IN factor DECIMAL(4,3)
+)
+BEGIN
+  UPDATE company_products AS cp
+  INNER JOIN products AS p ON cp.product_id = p.id
+  SET cp.price = cp.price * factor
+  WHERE p.category_id = cap_categoria_id;
+END $$
+DELIMITER ;
+
+-- Llamar procedimiento
+CALL categoria_actualizar_precio(1, 1.10);
 
 -- 8
+DELIMITER $$
+CREATE PROCEDURE nombre_procedimiento(
+  IN param1 INT,
+  IN param2 VARCHAR(50)
+)
+BEGIN
+  -- cuerpo del procedimiento
+  INSERT INTO tabla (col1, col2) VALUES (param1, param2);
+END $$
+DELIMITER ;
 
+-- Llamar procedimiento
+CALL nombre_procedimiento(valor1, 'valor2');
 -- 9
 
 -- 10

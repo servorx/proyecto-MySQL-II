@@ -1032,7 +1032,19 @@ CALL resumen_mensual();
    🧠 **Explicación:**
     Consulta `membershipbenefits` junto con `membershipperiods`, y devuelve una lista de beneficios vigentes según la fecha actual.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE beneficios_activos()
+BEGIN
+  SELECT mb.benefit_id
+  FROM membership_benefits AS mb
+  INNER JOIN membership_periods AS mp ON mb.membership_id = mp.membership_id
+  INNER JOIN periods AS p ON mp.period_id = p.id
+  WHERE CURRENT_DATE BETWEEN p.start_date AND p.end_date;
+END $$
+DELIMITER ;
 
+-- Llamar procedimiento
+CALL beneficios_activos();
 ```
    ------
 
@@ -1043,7 +1055,25 @@ CALL resumen_mensual();
    🧠 **Explicación:**
     Elimina productos de la tabla `products` que no tienen relación ni en `rates` ni en `companyproducts`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE eliminar_producto_huerfano()
+BEGIN
+  DELETE FROM products AS p
+  WHERE NOT EXISTS (
+    SELECT 1
+    FROM quality_products AS qp
+    WHERE qp.product_id = p.id
+  )
+  AND NOT EXISTS (
+    SELECT 1
+    FROM company_products AS cp
+    WHERE cp.product_id = p.id
+  );
+END $$
+DELIMITER ;
 
+-- Llamar procedimiento
+CALL eliminar_producto_huerfano();
 ```
    ------
 
@@ -1054,7 +1084,21 @@ CALL resumen_mensual();
    🧠 **Explicación:**
     Recibe un `categoria_id` y un `factor` (por ejemplo 1.05), y multiplica todos los precios por ese factor en la tabla `companyproducts`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE categoria_actualizar_precio(
+  IN cap_categoria_id INT,
+  IN factor DECIMAL(4,3)
+)
+BEGIN
+  UPDATE company_products AS cp
+  INNER JOIN products AS p ON cp.product_id = p.id
+  SET cp.price = cp.price * factor
+  WHERE p.category_id = cap_categoria_id;
+END $$
+DELIMITER ;
 
+-- Llamar procedimiento
+CALL categoria_actualizar_precio(1, 1.10);
 ```
    ------
 
