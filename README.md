@@ -893,7 +893,38 @@ LIMIT 1;
    🧠 **Explicación:**
     Este procedimiento recibe `product_id`, `customer_id` y `rating`, inserta la nueva fila en `rates`, y recalcula automáticamente el promedio en la tabla `products` (campo `average_rating`).
 ```sql
+-- decidi hacerlo en quality_products porque recibe mejor los parametros y no tengo que hacer tantos join
+DELIMITER $$
 
+CREATE PROCEDURE update_average(
+  IN ua_product_id INT,
+  IN ua_customer_id INT,
+  IN ua_company_id INT,
+  IN ua_poll_id INT,
+  IN ua_rating DECIMAL(5,2)
+)
+BEGIN
+  INSERT INTO quality_products (
+    product_id, customer_id, company_id, poll_id, daterating, rating
+  ) 
+  VALUES (
+    ua_product_id, ua_customer_id, ua_company_id, ua_poll_id, NOW(), ua_rating
+  );
+
+  -- Mostrar promedio del producto actualizado
+  SELECT 
+    p.id AS product_id,
+    p.name,
+    AVG(qp.rating) AS promedio_rating
+  FROM products AS p
+  INNER JOIN quality_products AS qp ON p.id = qp.product_id
+  WHERE p.id = ua_product_id
+  GROUP BY p.id, p.name;
+END $$
+
+DELIMITER ;
+
+CALL update_average(1, 2, 3, 1, 4.5);
 ```
    ------
 
