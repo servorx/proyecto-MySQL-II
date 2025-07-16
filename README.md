@@ -935,7 +935,38 @@ CALL update_average(1, 2, 3, 1, 4.5);
    🧠 **Explicación:**
     Este procedimiento inserta una empresa en `companies`, y luego vincula automáticamente productos predeterminados en `companyproducts`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE insert_company(
+  IN ic_type_id INT,
+  IN ic_name VARCHAR(80),
+  IN ic_category_id INT,
+  IN ic_city_id VARCHAR(10),
+  IN ic_audience_id INT,
+  IN ic_phone_id INT ,
+  IN ic_email_id INT
+)
+BEGIN
+  DECLARE new_company_id INT;
 
+  INSERT INTO companies (
+    type_id, name, category_id, city_id, audience_id, phone_id, email_id, isactive
+  )
+  VALUES (
+    ic_type_id, ic_name, ic_category_id, ic_city_id, ic_audience_id, ic_phone_id, ic_email_id, TRUE
+  );
+
+  SET new_company_id = LAST_INSERT_ID();
+
+  INSERT INTO company_products (company_id, product_id, price, unitmeasure_id)
+  VALUES 
+    (new_company_id, 1, 10000.00, 1),
+    (new_company_id, 2, 15000.00, 1),
+    (new_company_id, 3, 20000.00, 1);
+END $$
+DELIMITER ;
+
+-- Llamar procedimiento
+CALL insert_company(1,'Empresa Demo', 2,'57-1-BOG', 1, 3, 4);
 ```
    ------
 
@@ -946,7 +977,23 @@ CALL update_average(1, 2, 3, 1, 4.5);
    🧠 **Explicación:**
     Verifica si el producto ya está en favoritos (`details_favorites`). Si no lo está, lo inserta. Evita duplicaciones silenciosamente.
 ```sql
-
+DELIMITER $$
+CREATE PROCEDURE add_product_to_favorites(
+  IN ap_favorite_id INT,
+  IN ap_product_id INT
+)
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM detail_favorites 
+    WHERE product_id = ap_product_id AND favorite_id = ap_favorite_id
+  ) THEN
+    INSERT INTO detail_favorites (favorite_id, product_id) 
+    VALUES (ap_favorite_id, ap_product_id);
+  END IF;
+END $$
+DELIMITER ;
+-- Llamar procedimiento
+CALL add_product_to_favorites(4, 5); 
 ```
    ------
 
@@ -955,9 +1002,26 @@ CALL update_average(1, 2, 3, 1, 4.5);
    > *"Como gestor, deseo un procedimiento que genere un resumen mensual de calificaciones por empresa."*
 
    🧠 **Explicación:**
-    Hace una consulta agregada con `AVG(rating)` por empresa, y guarda los resultados en una tabla de resumen tipo `resumen_calificaciones`.
+    Hace una consulta agregada con `AVG(rating)`  por empresa, y guarda los resultados en una tabla de resumen tipo `resumen_calificaciones`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE resumen_mensual()
+BEGIN
+  SELECT 
+  qp.company_id,
+  c.name AS company_name,
+  DATE_FORMAT(qp.daterating, '%Y-%m-01') AS mes_resumen,
+  AVG(qp.rating) AS promedio_rating,
+  COUNT(*) AS total_calificaciones
+  FROM quality_products AS qp
+  INNER JOIN companies AS c ON qp.company_id = c.id
+  GROUP BY qp.company_id, mes_resumen
+  ORDER BY mes_resumen DESC, company_id;
+END $$
+DELIMITER ;
 
+-- Llamar procedimiento
+CALL resumen_mensual();
 ```
    ------
 
