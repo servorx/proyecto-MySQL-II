@@ -108,13 +108,12 @@ CALL resumen_mensual();
 
 -- 5
 DELIMITER $$
-CREATE PROCEDURE beneficios_activos(
-  IN param1 INT,
-  IN param2 VARCHAR(50)
-)
+CREATE PROCEDURE beneficios_activos()
 BEGIN
-  -- cuerpo del procedimiento
-  INSERT INTO tabla (col1, col2) VALUES (param1, param2);
+  SELECT 
+  FROM membership_benefits AS mb 
+  INNER JOIN  membership_periods AS mp ON 
+  WHERE 
 END $$
 DELIMITER ;
 
