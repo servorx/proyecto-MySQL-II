@@ -153,6 +153,8 @@ CREATE TABLE IF NOT EXISTS products (
   price DECIMAL(10,2),
   image VARCHAR(80),
   category_id INT,
+  average_rating DECIMAL(5,2) DEFAULT 0,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_category_id_products FOREIGN KEY (category_id) REFERENCES categories(id)
 ) ENGINE=INNODB;
 
@@ -183,7 +185,9 @@ CREATE TABLE IF NOT EXISTS polls (
   description TEXT,
   isactive BOOLEAN,
   categorypoll_id INT,
-  CONSTRAINT fk_categorypoll_id_polls FOREIGN KEY (categorypoll_id) REFERENCES categories_polls(id)
+  product_id INT,
+  CONSTRAINT fk_categorypoll_id_polls FOREIGN KEY (categorypoll_id) REFERENCES categories_polls(id),
+  CONSTRAINT fk_product_id_polls FOREIGN KEY (product_id) REFERENCES products(id)
 ) ENGINE=INNODB;
 
 CREATE TABLE IF NOT EXISTS addresses (
@@ -245,6 +249,33 @@ CREATE TABLE IF NOT EXISTS detail_favorites (
   id INT PRIMARY KEY AUTO_INCREMENT, 
   favorite_id INT,
   product_id INT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_favorite_id_detail_favorites FOREIGN KEY (favorite_id) REFERENCES favorites(id),
   CONSTRAINT fk_product_id_detail_favorites FOREIGN KEY (product_id) REFERENCES products(id)
+) ENGINE=INNODB;
+
+-- tabla especifica de un trigger
+CREATE TABLE IF NOT EXISTS log_acciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  accion VARCHAR(100),
+  customer_id INT,
+  company_id INT,
+  poll_id INT,
+  fecha DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- otra tabla para el caso de un trigger
+CREATE TABLE IF NOT EXISTS notificaciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  client_id INT,
+  message TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS bitacora (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  tabla_afectada VARCHAR(50),
+  accion VARCHAR(50),
+  fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+  descripcion TEXT
 ) ENGINE=INNODB;
