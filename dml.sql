@@ -1321,7 +1321,21 @@ INSERT INTO periods (name, start_date, end_date) VALUES ('Mensual', '2024-01-01'
 
 INSERT INTO benefits (description, detail) VALUES ('Descuento en Productos', 'Obtén un 10% de descuento en todas las compras de productos.'),('Soporte 24/7', 'Acceso a soporte técnico y al cliente las 24 horas del día, los 7 días de la semana.'),('Acceso a Contenido Exclusivo', 'Desbloquea artículos, videos y tutoriales solo para miembros.'),('Envío Gratuito', 'Disfruta de envío gratuito en todos tus pedidos.'),('Invitaciones a Eventos', 'Recibe invitaciones a webinars, talleres y eventos exclusivos para miembros.'),('Consultoría Personalizada', 'Sesiones de consultoría uno a uno con expertos.'),('Garantía Extendida', 'Extensión de la garantía en productos seleccionados.'),('Prioridad en Lista de Espera', 'Acceso prioritario a productos o servicios con alta demanda.'),('Acceso Beta a Nuevas Funciones', 'Sé de los primeros en probar nuevas características y productos.'),('Créditos de Compra', 'Recibe créditos para futuras compras en la plataforma.');
 
-INSERT INTO membership_periods (membership_id, period_id, price) VALUES (1, 1, 9.99),  (1, 3, 99.99),  (2, 1, 29.99),  (2, 3, 299.99), (3, 3, 999.99), (4, 1, 4.99),  (4, 3, 49.99), (5, 5, 1999.99),(1, 2, 24.99),  (2, 2, 79.99), (3, 2, 249.99), (1, 4, 49.99),  (2, 4, 149.99), (3, 4, 499.99); 
+INSERT INTO membership_periods (membership_id, period_id, price, status, pago_confirmado) VALUES
+(1, 1, 9.99, 'INACTIVA', FALSE),
+(1, 3, 99.99, 'INACTIVA', FALSE),
+(2, 1, 29.99, 'INACTIVA', FALSE),
+(2, 3, 299.99, 'INACTIVA', FALSE),
+(3, 3, 999.99, 'INACTIVA', FALSE),
+(4, 1, 4.99, 'INACTIVA', FALSE),
+(4, 3, 49.99, 'INACTIVA', FALSE),
+(5, 5, 1999.99, 'INACTIVA', FALSE),
+(1, 2, 24.99, 'INACTIVA', FALSE),
+(2, 2, 79.99, 'INACTIVA', FALSE),
+(3, 2, 249.99, 'INACTIVA', FALSE),
+(1, 4, 49.99, 'INACTIVA', FALSE),
+(2, 4, 149.99, 'INACTIVA', FALSE),
+(3, 4, 499.99, 'INACTIVA', FALSE);
 
 INSERT INTO audience_benefits (audience_id, benefit_id) VALUES(1, 1), (1, 4), (2, 2), (2, 6), (3, 3), (3, 1), (4, 5), (5, 6), (5, 2), (7, 5), (8, 10),(9, 9); 
 

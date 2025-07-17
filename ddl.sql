@@ -119,6 +119,8 @@ CREATE TABLE IF NOT EXISTS membership_periods (
   membership_id INT,
   period_id INT,
   price DECIMAL(10,2),
+  status VARCHAR(20),
+  pago_confirmado BOOLEAN,
   PRIMARY KEY(membership_id, period_id),
   CONSTRAINT fk_membership_id_membership_periods FOREIGN KEY (membership_id) REFERENCES memberships(id),
   CONSTRAINT fk_period_id_membership_periods FOREIGN KEY (period_id) REFERENCES periods(id)

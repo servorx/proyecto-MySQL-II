@@ -1109,7 +1109,20 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Busca calificaciones (`rates`) que no tengan entrada correspondiente en `quality_products`. Inserta el error en una tabla `errores_log`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE listar_inconsistencias_rates()
+BEGIN
+  SELECT r.*
+  FROM rates AS r
+  LEFT JOIN quality_products AS qp 
+    ON r.customer_id = qp.customer_id 
+    AND r.company_id = qp.company_id 
+    AND r.poll_id = qp.poll_id
+  WHERE qp.customer_id IS NULL;
+END $$
+DELIMITER ;
 
+CALL listar_inconsistencias_rates();
 ```
    ------
 
@@ -1120,7 +1133,25 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Recibe un `benefit_id` y `audience_id`, verifica si ya existe el registro, y si no, lo inserta en `audiencebenefits`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE asignar_beneficio_audiencia(
+  IN ab_benefit_id INT,
+  IN ab_audience_id INT
+)
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 
+    FROM audience_benefits 
+    WHERE benefit_id = ab_benefit_id 
+      AND audience_id = ab_audience_id
+  ) THEN
+    INSERT INTO audience_benefits (benefit_id, audience_id)
+    VALUES (ab_benefit_id, ab_audience_id);
+  END IF;
+END $$
+DELIMITER ;
 
+CALL asignar_beneficio_audiencia(1, 3);
 ```
    ------
 
@@ -1131,7 +1162,19 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Actualiza el campo `status` a `'ACTIVA'` en `membershipperiods` donde la fecha haya vencido pero el campo `pago_confirmado` sea `TRUE`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE activar_planes_vencidos()
+BEGIN
+  UPDATE membership_periods AS mp
+  INNER JOIN periods AS p ON mp.period_id = p.id
+  SET mp.status = 'ACTIVA'
+  WHERE p.end_date < CURDATE()
+    AND mp.pago_confirmado = TRUE
+    AND mp.status != 'ACTIVA';
+END $$
+DELIMITER ;
 
+CALL activar_planes_vencidos();
 ```
    ------
 
@@ -1142,7 +1185,25 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Consulta todos los productos favoritos del cliente y muestra el promedio de calificación de cada uno, uniendo `favorites`, `rates` y `products`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE listar_favoritos(
+  IN lf_id INT
+)
+BEGIN
+  SELECT p.id,
+  p.name,
+  AVG(qp.rating) AS promedio_rating
+  FROM detail_favorites AS df
+  INNER JOIN favorites AS f ON df.favorite_id = f.id
+  INNER JOIN products AS p ON df.product_id = p.id
+  LEFT JOIN quality_products AS qp ON qp.product_id = p.id
+  WHERE f.customer_id = lf_id
+  GROUP BY p.id, p.name
+  ;
+END $$
+DELIMITER ;
 
+CALL listar_favoritos(1);
 ```
    ------
 
@@ -1153,7 +1214,20 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Inserta la encuesta principal en `polls` y luego cada una de sus preguntas en otra tabla relacionada como `poll_questions`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE registrar_encuesta(
+  IN p_name VARCHAR(80),
+  IN p_description TEXT,
+  IN p_isactive BOOLEAN,
+  IN p_categorypoll_id INT
+)
+BEGIN
+  INSERT INTO polls (name, description, isactive, categorypoll_id)
+  VALUES (p_name, p_description, p_isactive, p_categorypoll_id);
+END $$
+DELIMITER ;
 
+CALL registrar_encuesta('Encuesta de Satisfacción','Mide la satisfacción de los clientes con los servicios ofrecidos',TRUE,1);
 ```
    ------
 
@@ -1164,7 +1238,18 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Filtra productos favoritos que no tienen calificaciones recientes y fueron añadidos hace más de 12 meses, y los elimina de `details_favorites`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE eliminar_favoritos_antiguos()
+BEGIN
+  DELETE df.*
+  FROM detail_favorites AS df
+  INNER JOIN favorites AS f ON df.favorite_id = f.id
+  LEFT JOIN quality_products AS qp ON qp.product_id = df.product_id AND qp.customer_id = f.customer_id
+  WHERE qp.daterating IS NULL OR qp.daterating < DATE_SUB(NOW(), INTERVAL 12 MONTH);
+END $$
+DELIMITER ;
 
+CALL eliminar_favoritos_antiguos();
 ```
    ------
 
@@ -1175,7 +1260,20 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Inserta en `audiencebenefits` todos los beneficios que apliquen según una lógica predeterminada (por ejemplo, por tipo de usuario).
 ```sql
+DELIMITER $$
+CREATE PROCEDURE asociar_beneficios_por_audiencia()
+BEGIN
+-- insert ignore para evitar duplicados
+  INSERT IGNORE INTO audience_benefits (audience_id, benefit_id)
 
+  SELECT a.id, 
+  b.id
+  FROM audiences AS a
+  INNER JOIN benefits AS b ON b.description LIKE CONCAT('%', a.description, '%');
+END $$
+DELIMITER ;
+
+CALL asociar_beneficios_por_audiencia();
 ```
    ------
 
@@ -1186,7 +1284,26 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Cada vez que se cambia un precio, el procedimiento compara el anterior con el nuevo y guarda un registro en una tabla `historial_precios`.
 ```sql
+-- primero crear una tabla temporal de historial_precios 
+CREATE TEMPORARY TABLE company_products_backup AS
+SELECT * FROM company_products;
 
+DELIMITER $$
+CREATE PROCEDURE simular_historial_precios()
+BEGIN
+  SELECT cp.product_id,
+    cp.company_id,
+    cpb.price AS precio_anterior,
+    cp.price AS precio_actual,
+    (cp.price - cpb.price) AS diferencia,
+    ((cp.price - cpb.price) / cpb.price) * 100 AS porcentaje_cambio
+  FROM company_products_backup AS cpb
+  INNER JOIN company_products AS cp ON cp.product_id = cpb.product_id AND cp.company_id = cpb.company_id
+  WHERE cp.price <> cpb.price;
+END $$
+DELIMITER ;
+
+CALL simular_historial_precios();
 ```
    ------
 
@@ -1195,9 +1312,26 @@ CALL categoria_actualizar_precio(1, 1.10);
    > *"Como desarrollador, quiero un procedimiento que registre automáticamente una nueva encuesta activa."*
 
    🧠 **Explicación:**
-    Inserta una encuesta en `polls` con el campo `status = 'activa'` y una fecha de inicio en `NOW()`.
+    Inserta una encuesta en `polls` con el campo `isactive = 'TRUE'` y una fecha de inicio en `NOW()`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE registrar_encuesta_activa(
+  IN p_name VARCHAR(80),
+  IN p_description TEXT,
+  IN p_categorypoll_id INT
+)
+BEGIN
+  INSERT INTO polls (name, description, isactive, categorypoll_id)
+  VALUES (
+    p_name,
+    p_description,
+    TRUE,
+    p_categorypoll_id
+  );
+END $$
+DELIMITER ;
 
+CALL registrar_encuesta_activa('Encuesta de satisfacción julio','Recoge opiniones de clientes sobre el servicio en julio.',1);
 ```
    ------
 
@@ -1206,9 +1340,33 @@ CALL categoria_actualizar_precio(1, 1.10);
    > *"Como técnico, deseo un procedimiento que actualice la unidad de medida de productos sin afectar si hay ventas."*
 
    🧠 **Explicación:**
-    Verifica si el producto no ha sido vendido, y si es así, permite actualizar su `unit_id`.
+    Verifica si el producto no ha sido vendido, y si es así, permite actualizar su `unitmeasure_id`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE actualizar_unidad_medida(
+  IN p_company_id INT,
+  IN p_product_id INT,
+  IN p_new_unitmeasure_id INT
+)
+BEGIN
+  DECLARE vendido INT;
 
+  SELECT COUNT(*) INTO vendido
+  FROM quality_products
+  WHERE product_id = p_product_id;
+
+  IF vendido = 0 THEN
+    UPDATE company_products
+    SET unitmeasure_id = p_new_unitmeasure_id
+    WHERE company_id = p_company_id AND product_id = p_product_id;
+    SELECT 'unidad de medida actualizada correctamente.' AS mensaje;
+  ELSE
+    SELECT 'no se puede actualizar la unidad de medida porque el producto ya fue vendido.' AS mensaje;
+  END IF;
+END $$
+DELIMITER ;
+
+CALL actualizar_unidad_medida(1, 42, 5);
 ```
    ------
 
@@ -1219,7 +1377,20 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Hace un `AVG(rating)` agrupado por producto y lo actualiza en `products`.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE recalcular_promedio_calidad()
+BEGIN
+  SELECT 
+    p.id AS producto_id,
+    p.name AS nombre_producto,
+    AVG(qp.rating) AS promedio_calidad
+  FROM products AS p
+  JOIN quality_products AS qp ON p.id = qp.product_id
+  GROUP BY p.id, p.name;
+END $$
+DELIMITER ;
 
+CALL recalcular_promedio_calidad();
 ```
    ------
 
@@ -1230,7 +1401,22 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Busca registros en `rates` con `poll_id` que no existen en `polls`, y los reporta.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE validate_poll_rates()
+BEGIN
+  SELECT 
+    r.customer_id,
+    r.company_id,
+    r.poll_id,
+    r.daterating,
+    r.rating
+  FROM rates AS r
+  LEFT JOIN polls AS p ON r.poll_id = p.id
+  WHERE p.id IS NULL;
+END $$
+DELIMITER ;
 
+CALL validate_poll_rates();
 ```
    ------
 
@@ -1241,7 +1427,28 @@ CALL categoria_actualizar_precio(1, 1.10);
    🧠 **Explicación:**
     Agrupa las calificaciones por ciudad (a través de la empresa que lo vende) y selecciona los 10 productos con más evaluaciones.
 ```sql
+DELIMITER $$
+CREATE PROCEDURE top_productos_por_ciudad()
+BEGIN
+  SELECT
+    c.city_id,
+    ci.name AS city_name,
+    p.id,
+    p.name AS product_name,
+    COUNT(*) AS total_ratings,
+    AVG(r.rating) AS avg_rating
+  FROM rates AS r
+  INNER JOIN company_products AS cp ON r.company_id = cp.company_id
+  INNER JOIN companies AS c ON r.company_id = c.id
+  INNER JOIN cities_or_municipalities AS ci ON c.city_id = ci.id
+  INNER JOIN products AS p ON qp.product_id = p.id
+  GROUP BY c.city_id, ci.name, qp.product_id, p.name
+  ORDER BY c.city_id, total_ratings DESC
+  LIMIT 10;
+END $$
+DELIMITER ;
 
+CALL top_productos_por_ciudad();
 ```
 ------
 
