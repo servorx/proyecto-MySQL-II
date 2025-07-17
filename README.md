@@ -1878,7 +1878,7 @@ CREATE TABLE IF NOT EXISTS bitacora (
    🧠 **Explicación:**
     Después de borrar la última relación entre un producto y una empresa (`companyproducts`), el trigger puede eliminar ese producto.
 ```sql
-
+-- 
 ```
 ------
 
